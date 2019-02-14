@@ -68,3 +68,4 @@ class Breathe {
     }, duration)
   }
 }
+export default Breathe

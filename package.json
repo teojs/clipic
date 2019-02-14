@@ -2,7 +2,7 @@
   "name": "breathejs",
   "version": "0.1.0",
   "description": "一个类似呼吸节奏的动画库",
-  "main": "index.js",
+  "main": "src/main.js",
   "directories": {
     "doc": "docs"
   },
@@ -21,5 +21,14 @@
   "bugs": {
     "url": "https://github.com/teojs/breathejs/issues"
   },
-  "homepage": "https://github.com/teojs/breathejs#readme"
+  "homepage": "https://github.com/teojs/breathejs#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "babel-preset-latest": "^6.24.1",
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-uglify": "^6.0.2"
+  }
 }

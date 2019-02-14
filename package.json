@@ -1,6 +1,6 @@
 {
   "name": "breathejs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "一个类似呼吸节奏的动画库",
   "main": "src/main.js",
   "directories": {

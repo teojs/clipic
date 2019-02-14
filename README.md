@@ -2,10 +2,17 @@
 
 一个类似呼吸节奏的动画库，支持 css3 transform 多种属性
 
-## 使用
+## js 使用
+
+```bash
+#bash
+
+npm install breathjs -save
+```
 
 ```js
 // xxx.js
+
 import Breath from 'breath'
 const breath = new Breath()
 breath.init()
@@ -15,11 +22,15 @@ breath.init()
 
 ```html
 <!-- xxx.html -->
+
 <script src="/dist/breath.min.js"></script>
 ```
 
+## html 使用
+
 ```html
 <!-- html -->
+
 <div data-breath="scale(1.2, 1.2)">缩放</div>
 <div data-breath="rotate(30deg)">旋转</div>
 <div data-breath="translate(10px, 10px)">位移</div>

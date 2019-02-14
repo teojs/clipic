@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Breathe.js</title>
+    <title>Breath.js</title>
     <style>
       body,
       html {
@@ -28,22 +28,21 @@
     </style>
   </head>
   <body>
-    <div class="item" data-breathe="scale(1.2,1.2);duration(2000)">B</div>
-    <div class="item" data-breathe="rotate(15deg)">r</div>
-    <div class="item" data-breathe="scale(1.2,1.2);rotate(-15deg)">e</div>
-    <div class="item" data-breathe="rotate(15deg);origin(left bottom)">a</div>
-    <div class="item" data-breathe="skew(-20deg)">t</div>
-    <div class="item" data-breathe="skewY(-20deg)">h</div>
-    <div class="item" data-breathe="scale(1.2, 1.2)">e</div>
-    <div class="item" data-breathe="translate(0.3em, 0)">.</div>
-    <div class="item" data-breathe="translate(0, 0.5em)">j</div>
-    <div class="item" data-breathe="translate(0, -0.5em)">s</div>
+    <div class="item" data-breath="scale(1.2,1.2);duration(2000)">B</div>
+    <div class="item" data-breath="rotate(15deg)">r</div>
+    <div class="item" data-breath="scale(1.2,1.2);rotate(-15deg)">e</div>
+    <div class="item" data-breath="rotate(15deg);origin(left bottom)">a</div>
+    <div class="item" data-breath="skew(-20deg)">t</div>
+    <div class="item" data-breath="skewY(-20deg)">h</div>
+    <div class="item" data-breath="translate(0.3em, 0)">.</div>
+    <div class="item" data-breath="translate(0, 0.5em)">j</div>
+    <div class="item" data-breath="translate(0, -0.5em)">s</div>
 
-    <script src="./dist/breathe.js"></script>
+    <script src="./dist/breath.min.js"></script>
     <script>
       window.onload = function() {
-        var breathe = new Breathe()
-        breathe.init()
+        var breath = new Breath()
+        breath.init()
       }
     </script>
   </body>

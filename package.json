@@ -1,5 +1,5 @@
 {
-  "name": "breathejs",
+  "name": "breathjs",
   "version": "0.2.0",
   "description": "一个类似呼吸节奏的动画库",
   "main": "src/main.js",
@@ -11,17 +11,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/teojs/breathejs.git"
+    "url": "git+https://github.com/teojs/breathjs.git"
   },
   "keywords": [
-    "animation、breathe"
+    "animation、breath"
   ],
   "author": "Teo <cheesen.xu@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/teojs/breathejs/issues"
+    "url": "https://github.com/teojs/breathjs/issues"
   },
-  "homepage": "https://github.com/teojs/breathejs#readme",
+  "homepage": "https://github.com/teojs/breathjs#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-external-helpers": "^6.22.0",

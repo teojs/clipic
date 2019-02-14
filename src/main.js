@@ -1,15 +1,15 @@
-class Breathe {
+class Breath {
   init () {
     const el = document.body.querySelectorAll('*')
     el.forEach((el, i) => {
-      if (el.dataset.breathe) {
+      if (el.dataset.breath) {
         this.doAnimation(el)
       }
     })
   }
 
   doAnimation (el) {
-    const data = el.dataset.breathe.split(';')
+    const data = el.dataset.breath.split(';')
     let transform = ''
     let duration = 1500
     let timing = 'linear'
@@ -68,4 +68,4 @@ class Breathe {
     }, duration)
   }
 }
-export default Breathe
+export default Breath

@@ -23,7 +23,7 @@ breath.init()
 ```html
 <!-- xxx.html -->
 
-<script src="/dist/breath.min.js"></script>
+<script src="breath.js"></script>
 ```
 
 ## html 使用

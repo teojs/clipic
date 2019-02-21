@@ -1,71 +1,98 @@
-class Breath {
-  init () {
-    const el = document.body.querySelectorAll('*')
-    el.forEach((el, i) => {
-      if (el.dataset.breath) {
-        this.doAnimation(el)
-      }
-    })
+class Clipic {
+  constructor(options) {
+    this.options = options
+    this.init()
   }
 
-  doAnimation (el) {
-    const data = el.dataset.breath.split(';')
-    let transform = ''
-    let duration = 1500
-    let timing = 'linear'
-    let origin = '50% 50% 0'
-    data.forEach(o => {
-      switch (true) {
-        case /scale/.test(o):
-          transform += o + ''
-          break
-        case /rotate/.test(o):
-          transform += o + ''
-          break
-        case /translate/.test(o):
-          transform += o + ''
-          break
-        case /skew/.test(o):
-          transform += o + ''
-          break
-        case /duration/.test(o):
-          duration = /[^()]+(?=\))/.exec(o)[0]
-          break
-        case /timing/.test(o):
-          timing = /[^()]+(?=\))/.exec(o)[0]
-          break
-        case /origin/.test(o):
-          origin = /[^()]+(?=\))/.exec(o)[0]
-          break
-      }
-    })
-    const transition = `transform ${timing} ${duration / 1000}s`
-    el.style['transition'] = transition
-    el.style['-ms-transition'] = transition
-    el.style['-webkit-transition'] = transition
-    el.style['-o-transition'] = transition
-    el.style['-moz-transition'] = transition
+  init() {
+    this.createStyle()
+    this.createHtml()
+  }
 
-    el.style['transform-origin'] = origin
-    el.style['-ms-transform-origin'] = origin
-    el.style['-webkit-transform-origin'] = origin
-    el.style['-o-transform-origin'] = origin
-    el.style['-moz-transform-origin'] = origin
-    setInterval(() => {
-      if (el.style.transform) {
-        el.style['transform'] = ''
-        el.style['-ms-transform'] = ''
-        el.style['-webkit-transform'] = ''
-        el.style['-o-transform'] = ''
-        el.style['-moz-transform'] = ''
-      } else {
-        el.style['transform'] = transform
-        el.style['-ms-transform'] = transform
-        el.style['-webkit-transform'] = transform
-        el.style['-o-transform'] = transform
-        el.style['-moz-transform'] = transform
+  createStyle() {
+    var style = document.createElement('style')
+    style.type = 'text/css'
+    var css = `
+      .clipic-body {
+        background: #1c1c1c;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        transform: translate(0, 100%);
+        transition: transform 0.4s;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        box-sizing: border-box;
       }
-    }, duration)
+      .clipic-body * {
+        box-sizing: border-box;
+      }
+      .clipic-operation-bar {
+        display: flex;
+        color: #f2f2f2;
+        justify-content: space-between;
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+      }
+      .clipic-operation-bar [role="button"] {
+        padding: 15px 20px;
+        font-size: 1em;
+      }
+      .clipic-frame {
+        height: 300px;
+        margin: 30px;
+        background: #f2f2f2;
+      }
+      .clipic-frame img {
+        width: 100%;
+      }
+      .clipic-cancel {
+        color: #3680fd;
+      }
+      .clipic-confirm{
+        color: #23c667;
+      }
+    `.trim()
+    style.innerHTML = css
+    document
+      .getElementsByTagName('HEAD')
+      .item(0)
+      .appendChild(style)
+  }
+
+  createHtml() {
+    var div = document.createElement('div')
+    div.className = 'clipic-body'
+    div.setAttribute('id', 'clipic')
+    var html = `
+      <div class="clipic-frame" id="clipicFrame"></div>
+      <div class="clipic-operation-bar">
+        <div class="clipic-cancel" role="button">取消</div>
+        <div class="clipic-confirm" role="button">完成</div>
+      </div>
+    `.trim()
+    div.innerHTML = html
+    document.body.appendChild(div)
+  }
+
+  getImage(options = {}, callback) {
+    var newOptions = options
+    if (this.options) {
+      newOptions = Object.assign(this.options, options)
+    }
+    var clipicFrame = document.getElementById('clipicFrame')
+    var clipicFrameW = newOptions.width || clipicFrame.clientWidth
+    var clipicFrameH = newOptions.height || clipicFrame.clientHeight
+    clipicFrame.style.height = clipicFrame.clientWidth / (clipicFrameW / clipicFrameH) + 'px'
+    var img = document.createElement('img')
+    img.src = newOptions.src
+    clipicFrame.appendChild(img)
+    var clipic = document.getElementById('clipic')
+    clipic.style['transform'] = 'translate(0, 0)'
   }
 }
-export default Breath
+export default Clipic

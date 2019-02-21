@@ -3,9 +3,9 @@ import { uglify } from 'rollup-plugin-uglify'
 export default {
   input: './src/main.js',
   output: {
-    file: 'breath.js',
+    file: 'clipic.js',
     format: 'umd',
-    name: 'Breath'
+    name: 'Clipic'
   },
   plugins: [
     babel({

@@ -2,47 +2,131 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Breath.js</title>
+    <title>Clipic.js</title>
     <style>
       body,
       html {
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background: #5fb0f5;
-        text-align: center;
-        display: flex;
-        padding: 0 1em;
+        background: #f2f2f2;
+        padding: 0;
         margin: 0;
-        font-size: 3em;
-        align-items: center;
-        justify-content: space-around;
-        box-sizing: border-box;
+        font-size: 1em;
       }
-      .item {
-        color: #ffffff;
+      header {
+        text-align: center;
+        padding: 0.8em 0;
+      }
+      ul {
+        padding: 0;
+        list-style: none;
+        margin-top: 0;
+        background: #ffffff;
+        border-top: 1px solid #d7d7d7;
+        border-bottom: 1px solid #d7d7d7;
+      }
+      li {
+        padding: 0.8em 0;
+        display: flex;
+        position: relative;
+        justify-content: space-between;
+        padding-left: 1em;
+        align-items: center;
+      }
+      li::before {
+        content: '';
+        height: 1px;
+        background: #d7d7d7;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 1em;
+        transform: scale(1, 0.5);
+      }
+      li:last-child::before {
+        display: none;
+      }
+      li .item-value {
+        color: #818181;
+        position: relative;
+      }
+      li .item-label {
+        flex: 1;
+        text-align: left;
+      }
+      li::after {
+        content: '';
+        width: 2em;
+        height: 1em;
+        background: url(./assets/right_arrow.png) no-repeat center center / contain;
         display: inline-block;
-        line-height: 1;
+        vertical-align: middle;
+      }
+      li .item-value img {
+        width: 2.5em;
+        height: 2.5em;
+        border-radius: 4px;
+      }
+      li a {
+        color: inherit;
+        text-decoration: none;
+      }
+      li .upload-img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
       }
     </style>
   </head>
   <body>
-    <div class="item" data-breath="scale(1.2,1.2);duration(2000)">B</div>
-    <div class="item" data-breath="rotate(15deg)">r</div>
-    <div class="item" data-breath="scale(1.2,1.2);rotate(-15deg)">e</div>
-    <div class="item" data-breath="rotate(15deg);origin(left bottom)">a</div>
-    <div class="item" data-breath="skew(-20deg)">t</div>
-    <div class="item" data-breath="skewY(-20deg)">h</div>
-    <div class="item" data-breath="translate(0.3em, 0)">.</div>
-    <div class="item" data-breath="translate(0, 0.5em)">j</div>
-    <div class="item" data-breath="translate(0, -0.5em)">s</div>
-
-    <script src="./breath.js"></script>
+    <header>个人信息</header>
+    <section>
+      <ul>
+        <li>
+          <div class="item-label">头像</div>
+          <div class="item-value">
+            <img src="https://avatars1.githubusercontent.com/u/25993112?s=460&v=4" alt="头像" />
+            <input type="file" name="file" class="upload-img" accept="image/*" onchange="chooseImg(this)" />
+          </div>
+        </li>
+        <li>
+          <div class="item-label">名字</div>
+          <div class="item-value">Teo</div>
+        </li>
+        <li>
+          <div class="item-label">邮箱</div>
+          <div class="item-value"><a href="mailto:cheesen.xu@gmail.com">cheesen.xu@gmail.com</a></div>
+        </li>
+        <li>
+          <div class="item-label">Github</div>
+          <div class="item-value"><a href="https://github.com/teojs">@teojs</a></div>
+        </li>
+      </ul>
+    </section>
+    <script src="./clipic.js"></script>
     <script>
-      window.onload = function() {
-        var breath = new Breath()
-        breath.init()
+      var clipic = new Clipic()
+      function chooseImg(event) {
+        var files = event.files || event.dataTransfer.files
+        var reader = new FileReader()
+        reader.readAsDataURL(files[0])
+        reader.onload = e => {
+          clipic.getImage({
+            width: 500,
+            height: 500,
+            src: e.target.result,
+            onDone: function(e) {
+              console.log(e)
+            }
+          })
+        }
+        event.value = ''
       }
     </script>
   </body>

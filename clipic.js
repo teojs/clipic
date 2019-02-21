@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.Breath = factory());
+  (global = global || self, global.Clipic = factory());
 }(this, function () { 'use strict';
 
   var classCallCheck = function (instance, Constructor) {
@@ -28,88 +28,62 @@
     };
   }();
 
-  var Breath = function () {
-    function Breath() {
-      classCallCheck(this, Breath);
+  var Clipic = function () {
+    function Clipic(options) {
+      classCallCheck(this, Clipic);
+
+      this.options = options;
+      this.init();
     }
 
-    createClass(Breath, [{
+    createClass(Clipic, [{
       key: 'init',
       value: function init() {
-        var _this = this;
-
-        var el = document.body.querySelectorAll('*');
-        el.forEach(function (el, i) {
-          if (el.dataset.breath) {
-            _this.doAnimation(el);
-          }
-        });
+        this.createStyle();
+        this.createHtml();
       }
     }, {
-      key: 'doAnimation',
-      value: function doAnimation(el) {
-        var data = el.dataset.breath.split(';');
-        var transform = '';
-        var duration = 1500;
-        var timing = 'linear';
-        var origin = '50% 50% 0';
-        data.forEach(function (o) {
-          switch (true) {
-            case /scale/.test(o):
-              transform += o + '';
-              break;
-            case /rotate/.test(o):
-              transform += o + '';
-              break;
-            case /translate/.test(o):
-              transform += o + '';
-              break;
-            case /skew/.test(o):
-              transform += o + '';
-              break;
-            case /duration/.test(o):
-              duration = /[^()]+(?=\))/.exec(o)[0];
-              break;
-            case /timing/.test(o):
-              timing = /[^()]+(?=\))/.exec(o)[0];
-              break;
-            case /origin/.test(o):
-              origin = /[^()]+(?=\))/.exec(o)[0];
-              break;
-          }
-        });
-        var transition = 'transform ' + timing + ' ' + duration / 1000 + 's';
-        el.style['transition'] = transition;
-        el.style['-ms-transition'] = transition;
-        el.style['-webkit-transition'] = transition;
-        el.style['-o-transition'] = transition;
-        el.style['-moz-transition'] = transition;
+      key: 'createStyle',
+      value: function createStyle() {
+        var style = document.createElement('style');
+        style.type = 'text/css';
+        var css = '\n      .clipic-body {\n        background: #1c1c1c;\n        position: fixed;\n        width: 100%;\n        height: 100%;\n        top: 0;\n        left: 0;\n        transform: translate(0, 100%);\n        transition: transform 0.4s;\n        -webkit-touch-callout: none;\n        -webkit-user-select: none;\n        box-sizing: border-box;\n      }\n      .clipic-body * {\n        box-sizing: border-box;\n      }\n      .clipic-operation-bar {\n        display: flex;\n        color: #f2f2f2;\n        justify-content: space-between;\n        position: absolute;\n        width: 100%;\n        bottom: 0;\n        left: 0;\n      }\n      .clipic-operation-bar [role="button"] {\n        padding: 15px 20px;\n        font-size: 1.2em;\n      }\n      .clipic-frame {\n        height: 300px;\n        margin: 30px;\n        background: #f2f2f2;\n      }\n      .clipic-frame img {\n        width: 100%;\n      }\n      .clipic-cancel {\n        color: #3680fd;\n      }\n      .clipic-confirm{\n        color: #23c667;\n      }\n    '.trim();
+        style.innerHTML = css;
+        document.getElementsByTagName('HEAD').item(0).appendChild(style);
+      }
+    }, {
+      key: 'createHtml',
+      value: function createHtml() {
+        var div = document.createElement('div');
+        div.className = 'clipic-body';
+        div.setAttribute('id', 'clipic');
+        var html = '\n      <div class="clipic-frame" id="clipicFrame"></div>\n      <div class="clipic-operation-bar">\n        <div class="clipic-cancel" role="button">\u53D6\u6D88</div>\n        <div class="clipic-confirm" role="button">\u5B8C\u6210</div>\n      </div>\n    '.trim();
+        div.innerHTML = html;
+        document.body.appendChild(div);
+      }
+    }, {
+      key: 'getImage',
+      value: function getImage() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-        el.style['transform-origin'] = origin;
-        el.style['-ms-transform-origin'] = origin;
-        el.style['-webkit-transform-origin'] = origin;
-        el.style['-o-transform-origin'] = origin;
-        el.style['-moz-transform-origin'] = origin;
-        setInterval(function () {
-          if (el.style.transform) {
-            el.style['transform'] = '';
-            el.style['-ms-transform'] = '';
-            el.style['-webkit-transform'] = '';
-            el.style['-o-transform'] = '';
-            el.style['-moz-transform'] = '';
-          } else {
-            el.style['transform'] = transform;
-            el.style['-ms-transform'] = transform;
-            el.style['-webkit-transform'] = transform;
-            el.style['-o-transform'] = transform;
-            el.style['-moz-transform'] = transform;
-          }
-        }, duration);
+        var newOptions = options;
+        if (this.options) {
+          newOptions = Object.assign(this.options, options);
+        }
+        var clipicFrame = document.getElementById('clipicFrame');
+        var clipicFrameW = newOptions.width || clipicFrame.clientWidth;
+        var clipicFrameH = newOptions.height || clipicFrame.clientHeight;
+        clipicFrame.style.height = clipicFrame.clientWidth / (clipicFrameW / clipicFrameH) + 'px';
+        var img = document.createElement('img');
+        img.src = newOptions.src;
+        clipicFrame.appendChild(img);
+        var clipic = document.getElementById('clipic');
+        clipic.style['transform'] = 'translate(0, 0)';
       }
     }]);
-    return Breath;
+    return Clipic;
   }();
 
-  return Breath;
+  return Clipic;
 
 }));

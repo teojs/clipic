@@ -1,25 +1,26 @@
 {
-  "name": "breathjs",
-  "version": "0.3.0",
-  "description": "一个类似呼吸节奏的动画库",
-  "main": "breath.js",
+  "name": "clipic",
+  "version": "0.0.1",
+  "description": "移动端图片裁剪工具",
+  "main": "clipic.js",
   "directories": {
     "doc": "docs"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/teojs/breathjs.git"
+    "url": "git+https://github.com/teojs/clipic.git"
   },
   "keywords": [
-    "animation",
-    "breath"
+    "image",
+    "picture",
+    "clip"
   ],
   "author": "Teo <cheesen.xu@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/teojs/breathjs/issues"
+    "url": "https://github.com/teojs/clipic/issues"
   },
-  "homepage": "https://github.com/teojs/breathjs#readme",
+  "homepage": "https://github.com/teojs/clipic#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-external-helpers": "^6.22.0",

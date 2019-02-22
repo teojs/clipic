@@ -61,7 +61,7 @@ class Clipic {
         overflow: hidden;
       }
       .clipic-frame img {
-        transition: 1s;
+        transition: transform 0.5s linear;
       }
       .clipic-cancel {
         color: #3680fd;
@@ -93,40 +93,39 @@ class Clipic {
   }
 
   getImage(options = {}, callback) {
-    var newOptions = options
-    if (this.options) {
-      newOptions = Object.assign(this.options, options)
+    this.newOptions = Object.assign(this.options || {}, options)
+    this.newOptions.ratio = this.newOptions.ratio || this.newOptions.width / this.newOptions.height
+    this.clipicFrame.style.height = this.clipicFrame.clientWidth / this.newOptions.ratio + 'px'
+    this.clipicImg.src = this.newOptions.src
+    this.clipicImg.onload = () => {
+      this.originW = this.clipicImg.width
+      this.originH = this.clipicImg.height
+      this.originRatio = this.originW / this.originH
+      this.initSize()
+      this.clipic.style['transform'] = 'translate(0, 0)'
+      this.clipicCancel.addEventListener('click', () => {
+        this.cancel()
+      })
     }
-    var clipicFrameW = newOptions.width || this.clipicFrame.clientWidth
-    var clipicFrameH = newOptions.height || this.clipicFrame.clientHeight
-    this.clipicFrame.style.height = this.clipicFrame.clientWidth / (clipicFrameW / clipicFrameH) + 'px'
-    this.clipicImg.src = newOptions.src
-    this.clipic.style['transform'] = 'translate(0, 0)'
-    setTimeout(() => {
-      this.setMiniSize()
-    }, 400)
-    this.clipicCancel.addEventListener('click', () => {
-      this.cancel()
-    })
   }
 
-  setMiniSize() {
-    var w = this.clipicFrame.clientWidth
-    var h = this.clipicFrame.clientHeight
-    var imgW = this.clipicImg.clientWidth
-    var imgH = this.clipicImg.clientHeight
-    if (imgH < h) {
-      this.clipicImg.style.width = h * (imgW / imgH) + 'px'
-      this.clipicImg.style.height = h + 'px'
-    }
-    if (imgW < w) {
-      this.clipicImg.style.width = w + 'px'
-      this.clipicImg.style.height = w * (imgW / imgH) + 'px'
+  initSize() {
+    if (this.newOptions.ratio > this.originRatio) {
+      this.clipicImg.style.width = this.clipicFrame.clientWidth + 'px'
+      this.clipicImg.style['transform'] = `translate(0, -${(this.clipicImg.clientHeight -
+        this.clipicFrame.clientHeight) /
+        2}px)`
+    } else {
+      this.clipicImg.style.height = this.clipicFrame.clientHeight + 'px'
+      this.clipicImg.style['transform'] = `translate(-${(this.clipicImg.clientWidth - this.clipicFrame.clientWidth) /
+        2}px, 0)`
     }
   }
 
   cancel() {
     this.clipic.style['transform'] = 'translate(0, 100%)'
+    this.clipicImg.style = ''
+    this.clipicImg.src = ''
   }
 }
 export default Clipic

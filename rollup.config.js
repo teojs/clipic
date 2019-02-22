@@ -1,16 +1,31 @@
 import babel from 'rollup-plugin-babel'
 import { uglify } from 'rollup-plugin-uglify'
-export default {
-  input: './src/main.js',
-  output: {
-    file: 'clipic.js',
-    format: 'umd',
-    name: 'Clipic'
+export default [
+  {
+    input: './src/main.js',
+    output: {
+      file: './dist/clipic.js',
+      format: 'umd',
+      name: 'Clipic'
+    },
+    plugins: [
+      babel({
+        exclude: 'node_modules/**'
+      })
+    ]
   },
-  plugins: [
-    babel({
-      exclude: 'node_modules/**'
-    })/* ,
-    uglify() */
-  ]
-}
+  {
+    input: './src/main.js',
+    output: {
+      file: './dist/clipic.min.js',
+      format: 'umd',
+      name: 'Clipic'
+    },
+    plugins: [
+      babel({
+        exclude: 'node_modules/**'
+      }),
+      uglify()
+    ]
+  }
+]

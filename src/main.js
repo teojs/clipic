@@ -108,7 +108,7 @@ class Clipic {
         this.cancel()
       })
       this.clipicFrame.addEventListener('touchmove', e => {
-        if (e.touches[0] && e.touches[1]) {
+        if (e.touches.length > 1) {
           this.setScale(e.touches[0], e.touches[1])
           this.setRotate(e.touches[0], e.touches[1])
           return
@@ -133,21 +133,21 @@ class Clipic {
   }
 
   setScale(touches1, touches2) {
-    const w = Math.abs(touches1.clientX - touches2.clientX)
-    const h = Math.abs(touches1.clientY - touches2.clientY)
-    const s = Math.sqrt(w * w + h * h)
+    const x = Math.abs(touches1.clientX - touches2.clientX)
+    const y = Math.abs(touches1.clientY - touches2.clientY)
+    const s = Math.sqrt(x * x + y * y)
     if (this.distance) {
-      this.scale += ((s - this.distance) / this.clipicImg.clientWidth) * 2
+      this.scale += (s - this.distance) / this.clipicImg.clientWidth
       this.setTransform()
     }
     this.distance = s
   }
 
   setRotate(touches1, touches2) {
-    const w = Math.abs(touches1.clientX - touches2.clientX)
-    const h = Math.abs(touches1.clientY - touches2.clientY)
-    const s = Math.sqrt(w * w + h * h)
-    const angle = (Math.atan(w / h) * 180) / Math.PI
+    const x = touches1.clientX - touches2.clientX
+    const y = touches1.clientY - touches2.clientY
+    const s = Math.sqrt(x * x + y * y)
+    const angle = (Math.atan2(y, x) * 180) / Math.PI
     if (this.angle) {
       this.rotate += angle - this.angle
       this.setTransform()
@@ -156,16 +156,16 @@ class Clipic {
   }
 
   setTranslate(touches1, touches2) {
-    const w = touches1.clientX
-    const h = touches1.clientY
+    const x = touches1.clientX
+    const y = touches1.clientY
     if (this.moveX) {
-      this.translateX += w - this.moveX
+      this.translateX += x - this.moveX
     }
     if (this.moveY) {
-      this.translateY += h - this.moveY
+      this.translateY += y - this.moveY
     }
-    this.moveX = w
-    this.moveY = h
+    this.moveX = x
+    this.moveY = y
     this.setTransform()
   }
 

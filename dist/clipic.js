@@ -96,7 +96,7 @@
             _this.cancel();
           });
           _this.clipicFrame.addEventListener('touchmove', function (e) {
-            if (e.touches[0] && e.touches[1]) {
+            if (e.touches.length > 1) {
               _this.setScale(e.touches[0], e.touches[1]);
               _this.setRotate(e.touches[0], e.touches[1]);
               return;
@@ -123,11 +123,11 @@
     }, {
       key: 'setScale',
       value: function setScale(touches1, touches2) {
-        var w = Math.abs(touches1.clientX - touches2.clientX);
-        var h = Math.abs(touches1.clientY - touches2.clientY);
-        var s = Math.sqrt(w * w + h * h);
+        var x = Math.abs(touches1.clientX - touches2.clientX);
+        var y = Math.abs(touches1.clientY - touches2.clientY);
+        var s = Math.sqrt(x * x + y * y);
         if (this.distance) {
-          this.scale += (s - this.distance) / this.clipicImg.clientWidth * 2;
+          this.scale += (s - this.distance) / this.clipicImg.clientWidth;
           this.setTransform();
         }
         this.distance = s;
@@ -135,9 +135,9 @@
     }, {
       key: 'setRotate',
       value: function setRotate(touches1, touches2) {
-        var w = Math.abs(touches1.clientX - touches2.clientX);
-        var h = Math.abs(touches1.clientY - touches2.clientY);
-        var angle = Math.atan(w / h) * 180 / Math.PI;
+        var x = touches1.clientX - touches2.clientX;
+        var y = touches1.clientY - touches2.clientY;
+        var angle = Math.atan2(y, x) * 180 / Math.PI;
         if (this.angle) {
           this.rotate += angle - this.angle;
           this.setTransform();
@@ -147,16 +147,16 @@
     }, {
       key: 'setTranslate',
       value: function setTranslate(touches1, touches2) {
-        var w = touches1.clientX;
-        var h = touches1.clientY;
+        var x = touches1.clientX;
+        var y = touches1.clientY;
         if (this.moveX) {
-          this.translateX += w - this.moveX;
+          this.translateX += x - this.moveX;
         }
         if (this.moveY) {
-          this.translateY += h - this.moveY;
+          this.translateY += y - this.moveY;
         }
-        this.moveX = w;
-        this.moveY = h;
+        this.moveX = x;
+        this.moveY = y;
         this.setTransform();
       }
     }, {

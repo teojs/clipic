@@ -1,9 +1,6 @@
 class Clipic {
   constructor(options) {
     this.options = options
-    this.scaleX = 1
-    this.scaleY = 1
-    this.rotate = 0
     this.init()
     this.clipicFrame = this.getId('clipicFrame')
     this.clipic = this.getId('clipic')
@@ -61,7 +58,6 @@ class Clipic {
         overflow: hidden;
       }
       .clipic-frame img {
-        transition: transform 0.5s linear;
       }
       .clipic-cancel {
         color: #3680fd;
@@ -92,7 +88,11 @@ class Clipic {
     document.body.appendChild(div)
   }
 
-  getImage(options = {}, callback) {
+  getImage(options = {}) {
+    this.scale = 1
+    this.rotate = 0
+    this.translateX = 0
+    this.translateY = 0
     this.newOptions = Object.assign(this.options || {}, options)
     this.newOptions.ratio = this.newOptions.ratio || this.newOptions.width / this.newOptions.height
     this.clipicFrame.style.height = this.clipicFrame.clientWidth / this.newOptions.ratio + 'px'
@@ -106,26 +106,62 @@ class Clipic {
       this.clipicCancel.addEventListener('click', () => {
         this.cancel()
       })
+      this.clipicImg.addEventListener('touchmove', e => {
+        this.setScale(e.touches[0], e.touches[1])
+        this.setRotate(e.touches[0], e.touches[1])
+      })
+      this.clipicImg.addEventListener('touchend', e => {
+        this.distance = null
+        this.angle = null
+      })
     }
   }
 
   initSize() {
     if (this.newOptions.ratio > this.originRatio) {
       this.clipicImg.style.width = this.clipicFrame.clientWidth + 'px'
-      this.clipicImg.style['transform'] = `translate(0, -${(this.clipicImg.clientHeight -
-        this.clipicFrame.clientHeight) /
-        2}px)`
+      this.translate = `translate(0, -${(this.clipicImg.clientHeight - this.clipicFrame.clientHeight) / 2}px)`
+      this.clipicImg.style['transform'] = this.translate
     } else {
       this.clipicImg.style.height = this.clipicFrame.clientHeight + 'px'
-      this.clipicImg.style['transform'] = `translate(-${(this.clipicImg.clientWidth - this.clipicFrame.clientWidth) /
-        2}px, 0)`
+      this.translate = `translate(-${(this.clipicImg.clientWidth - this.clipicFrame.clientWidth) / 2}px, 0)`
+      this.clipicImg.style['transform'] = this.translate
     }
   }
 
+  setScale(touches1, touches2) {
+    if (touches1 && touches2) {
+      const w = Math.abs(touches1.clientX - touches2.clientX)
+      if (this.distance) {
+        this.scale += (w - this.distance) / this.clipicImg.clientWidth
+        this.setTransform()
+      }
+      this.distance = w
+    }
+  }
+
+  setRotate(touches1, touches2) {
+    if (touches1 && touches2) {
+      const w = Math.abs(touches1.clientX - touches2.clientX)
+      const h = Math.abs(touches1.clientY - touches2.clientY)
+      const s = Math.sqrt(w * w + h * h)
+      const angle = (Math.atan(w / h) * 180) / Math.PI
+      if (this.angle) {
+        this.rotate += angle - this.angle
+        this.setTransform()
+      }
+      this.angle = angle
+    }
+  }
+  setTransform() {
+    this.clipicImg.style['transform'] = `${this.translate} scale(${this.scale}) rotate(${this.rotate}deg)`
+  }
   cancel() {
     this.clipic.style['transform'] = 'translate(0, 100%)'
-    this.clipicImg.style = ''
-    this.clipicImg.src = ''
+    setTimeout(() => {
+      this.clipicImg.style = ''
+      this.clipicImg.src = ''
+    }, 400)
   }
 }
 export default Clipic

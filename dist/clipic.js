@@ -33,9 +33,6 @@
       classCallCheck(this, Clipic);
 
       this.options = options;
-      this.scaleX = 1;
-      this.scaleY = 1;
-      this.rotate = 0;
       this.init();
       this.clipicFrame = this.getId('clipicFrame');
       this.clipic = this.getId('clipic');
@@ -60,7 +57,7 @@
       value: function createStyle() {
         var style = document.createElement('style');
         style.type = 'text/css';
-        var css = '\n      .clipic-body {\n        background: #1c1c1c;\n        position: fixed;\n        width: 100%;\n        height: 100%;\n        top: 0;\n        left: 0;\n        transform: translate(0, 100%);\n        transition: 0.4s;\n        -webkit-touch-callout: none;\n        -webkit-user-select: none;\n        box-sizing: border-box;\n      }\n      .clipic-body * {\n        box-sizing: border-box;\n      }\n      .clipic-operation-bar {\n        display: flex;\n        color: #f2f2f2;\n        justify-content: space-between;\n        position: absolute;\n        width: 100%;\n        bottom: 0;\n        left: 0;\n      }\n      .clipic-operation-bar [role="button"] {\n        padding: 15px 20px;\n        font-size: 1em;\n      }\n      .clipic-frame {\n        height: 300px;\n        margin: 30px;\n        background: #f2f2f2;\n        overflow: hidden;\n      }\n      .clipic-frame img {\n        transition: transform 0.5s linear;\n      }\n      .clipic-cancel {\n        color: #3680fd;\n      }\n      .clipic-confirm{\n        color: #23c667;\n      }\n    '.trim();
+        var css = '\n      .clipic-body {\n        background: #1c1c1c;\n        position: fixed;\n        width: 100%;\n        height: 100%;\n        top: 0;\n        left: 0;\n        transform: translate(0, 100%);\n        transition: 0.4s;\n        -webkit-touch-callout: none;\n        -webkit-user-select: none;\n        box-sizing: border-box;\n      }\n      .clipic-body * {\n        box-sizing: border-box;\n      }\n      .clipic-operation-bar {\n        display: flex;\n        color: #f2f2f2;\n        justify-content: space-between;\n        position: absolute;\n        width: 100%;\n        bottom: 0;\n        left: 0;\n      }\n      .clipic-operation-bar [role="button"] {\n        padding: 15px 20px;\n        font-size: 1em;\n      }\n      .clipic-frame {\n        height: 300px;\n        margin: 30px;\n        background: #f2f2f2;\n        overflow: hidden;\n      }\n      .clipic-frame img {\n      }\n      .clipic-cancel {\n        color: #3680fd;\n      }\n      .clipic-confirm{\n        color: #23c667;\n      }\n    '.trim();
         style.innerHTML = css;
         document.getElementsByTagName('HEAD').item(0).appendChild(style);
       }
@@ -81,6 +78,10 @@
 
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
+        this.scale = 1;
+        this.rotate = 0;
+        this.translateX = 0;
+        this.translateY = 0;
         this.newOptions = Object.assign(this.options || {}, options);
         this.newOptions.ratio = this.newOptions.ratio || this.newOptions.width / this.newOptions.height;
         this.clipicFrame.style.height = this.clipicFrame.clientWidth / this.newOptions.ratio + 'px';
@@ -94,44 +95,70 @@
           _this.clipicCancel.addEventListener('click', function () {
             _this.cancel();
           });
+          _this.clipicImg.addEventListener('touchmove', function (e) {
+            _this.setScale(e.touches[0], e.touches[1]);
+            _this.setRotate(e.touches[0], e.touches[1]);
+          });
+          _this.clipicImg.addEventListener('touchend', function (e) {
+            _this.distance = null;
+            _this.angle = null;
+          });
         };
       }
     }, {
       key: 'initSize',
       value: function initSize() {
-        // var w = this.clipicFrame.clientWidth
-        // var h = this.clipicFrame.clientHeight
-        // this.clipicImg.style.width = w + 'px'
-        // this.clipicImg.style.height = w / (this.originW / this.originH) + 'px'
-        // var imgW = this.clipicImg.clientWidth
-        // var imgH = this.clipicImg.clientHeight
-        // if (imgH < h) {
-        //   this.clipicImg.style.height = h + 'px'
-        //   this.clipicImg.style.width = h * (imgW / imgH) + 'px'
-        // }
-        // imgW = this.clipicImg.clientWidth
-        // imgH = this.clipicImg.clientHeight
-        // console.log(w, h, imgW, imgH)
-        // if (imgW > w) {
-        //   this.clipicImg.style['transform'] = `translate(-${(imgW - w) / 2}px, 0)`
-        // }
-        // if (imgW > w) {
-        //   this.clipicImg.style['transform'] = `translate(-${(imgW - w) / 2}px, 0)`
-        // }
         if (this.newOptions.ratio > this.originRatio) {
           this.clipicImg.style.width = this.clipicFrame.clientWidth + 'px';
-          this.clipicImg.style['transform'] = 'translate(0, -' + (this.clipicImg.clientHeight - this.clipicFrame.clientHeight) / 2 + 'px)';
+          this.translate = 'translate(0, -' + (this.clipicImg.clientHeight - this.clipicFrame.clientHeight) / 2 + 'px)';
+          this.clipicImg.style['transform'] = this.translate;
         } else {
           this.clipicImg.style.height = this.clipicFrame.clientHeight + 'px';
-          this.clipicImg.style['transform'] = 'translate(-' + (this.clipicImg.clientWidth - this.clipicFrame.clientWidth) / 2 + 'px, 0)';
+          this.translate = 'translate(-' + (this.clipicImg.clientWidth - this.clipicFrame.clientWidth) / 2 + 'px, 0)';
+          this.clipicImg.style['transform'] = this.translate;
         }
+      }
+    }, {
+      key: 'setScale',
+      value: function setScale(touches1, touches2) {
+        if (touches1 && touches2) {
+          var w = Math.abs(touches1.clientX - touches2.clientX);
+          if (this.distance) {
+            this.scale += (w - this.distance) / this.clipicImg.clientWidth;
+            this.setTransform();
+          }
+          this.distance = w;
+        }
+      }
+    }, {
+      key: 'setRotate',
+      value: function setRotate(touches1, touches2) {
+        if (touches1 && touches2) {
+          var w = Math.abs(touches1.clientX - touches2.clientX);
+          var h = Math.abs(touches1.clientY - touches2.clientY);
+          var angle = Math.atan(w / h) * 180 / Math.PI;
+          if (this.angle) {
+            this.rotate += angle - this.angle;
+            this.setTransform();
+          }
+          this.angle = angle;
+        }
+      }
+    }, {
+      key: 'setTransform',
+      value: function setTransform() {
+        this.clipicImg.style['transform'] = this.translate + ' scale(' + this.scale + ') rotate(' + this.rotate + 'deg)';
       }
     }, {
       key: 'cancel',
       value: function cancel() {
+        var _this2 = this;
+
         this.clipic.style['transform'] = 'translate(0, 100%)';
-        this.clipicImg.style = '';
-        this.clipicImg.src = '';
+        setTimeout(function () {
+          _this2.clipicImg.style = '';
+          _this2.clipicImg.src = '';
+        }, 400);
       }
     }]);
     return Clipic;

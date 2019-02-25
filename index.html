@@ -126,8 +126,8 @@
         reader.readAsDataURL(files[0])
         reader.onload = e => {
           clipic.getImage({
-            width: 1900,
-            height: 1500,
+            width: 1200,
+            height: 800,
             src: e.target.result,
             onDone: function(e) {
               document.getElementById('previewImg').src = e

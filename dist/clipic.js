@@ -4,6 +4,10 @@
   (global = global || self, global.Clipic = factory());
 }(this, function () { 'use strict';
 
+  var css = "\n  .clipic-body {\n    background: #1c1c1c;\n    position: fixed;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    transform: translate(0, 100%);\n    transition: 0.4s;\n    -webkit-touch-callout: none;\n    -webkit-user-select: none;\n    box-sizing: border-box;\n    z-index: 99;\n  }\n  .clipic-body * {\n    box-sizing: border-box;\n  }\n  .clipic-operation-bar {\n    display: flex;\n    color: #f2f2f2;\n    justify-content: space-between;\n    position: absolute;\n    width: 100%;\n    bottom: 0;\n    left: 0;\n  }\n  .clipic-operation-bar [role=\"button\"] {\n    padding: 15px 20px;\n    font-size: 1em;\n  }\n  .clipic-frame {\n    height: 300px;\n    margin: 30px;\n    background: #f2f2f2;\n    overflow: hidden;\n  }\n  .clipic-frame img {\n  }\n  .clipic-cancel {\n    color: #3680fd;\n  }\n  .clipic-confirm{\n    color: #23c667;\n  }\n";
+
+  var dom = "\n    <div class=\"clipic-frame\" id=\"clipicFrame\"></div>\n    <div class=\"clipic-operation-bar\">\n      <div class=\"clipic-cancel\" id=\"clipicCancel\" role=\"button\">\u53D6\u6D88</div>\n      <div class=\"clipic-confirm\" id=\"clipicConfirm\" role=\"button\">\u5B8C\u6210</div>\n    </div>\n  ";
+
   var classCallCheck = function (instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -58,7 +62,6 @@
       value: function createStyle() {
         var style = document.createElement('style');
         style.type = 'text/css';
-        var css = '\n      .clipic-body {\n        background: #1c1c1c;\n        position: fixed;\n        width: 100%;\n        height: 100%;\n        top: 0;\n        left: 0;\n        transform: translate(0, 100%);\n        transition: 0.4s;\n        -webkit-touch-callout: none;\n        -webkit-user-select: none;\n        box-sizing: border-box;\n        z-index: 99;\n      }\n      .clipic-body * {\n        box-sizing: border-box;\n      }\n      .clipic-operation-bar {\n        display: flex;\n        color: #f2f2f2;\n        justify-content: space-between;\n        position: absolute;\n        width: 100%;\n        bottom: 0;\n        left: 0;\n      }\n      .clipic-operation-bar [role="button"] {\n        padding: 15px 20px;\n        font-size: 1em;\n      }\n      .clipic-frame {\n        height: 300px;\n        margin: 30px;\n        background: #f2f2f2;\n        overflow: hidden;\n      }\n      .clipic-frame img {\n      }\n      .clipic-cancel {\n        color: #3680fd;\n      }\n      .clipic-confirm{\n        color: #23c667;\n      }\n    '.trim();
         style.innerHTML = css;
         document.getElementsByTagName('HEAD').item(0).appendChild(style);
       }
@@ -68,8 +71,7 @@
         var div = document.createElement('div');
         div.className = 'clipic-body';
         div.setAttribute('id', 'clipic');
-        var html = '\n      <div class="clipic-frame" id="clipicFrame"></div>\n      <div class="clipic-operation-bar">\n        <div class="clipic-cancel" id="clipicCancel" role="button">\u53D6\u6D88</div>\n        <div class="clipic-confirm" id="clipicConfirm" role="button">\u5B8C\u6210</div>\n      </div>\n    '.trim();
-        div.innerHTML = html;
+        div.innerHTML = dom;
         document.body.appendChild(div);
       }
     }, {

@@ -36,6 +36,7 @@ const css = `
     overflow: hidden;
   }
   .clipic-frame img {
+    -webkit-touch-callout: none;
   }
   .clipic-cancel {
     color: #3680fd;

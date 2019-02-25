@@ -37,6 +37,7 @@
       this.clipicFrame = this.getId('clipicFrame');
       this.clipic = this.getId('clipic');
       this.clipicCancel = this.getId('clipicCancel');
+      this.clipicConfirm = this.getId('clipicConfirm');
       this.clipicImg = document.createElement('img');
       this.clipicFrame.appendChild(this.clipicImg);
     }
@@ -94,6 +95,9 @@
           _this.clipic.style['transform'] = 'translate(0, 0)';
           _this.clipicCancel.addEventListener('click', function () {
             _this.cancel();
+          });
+          _this.clipicConfirm.addEventListener('click', function () {
+            _this.done();
           });
           _this.clipicFrame.addEventListener('touchmove', function (e) {
             if (e.touches.length > 1) {
@@ -174,6 +178,30 @@
           _this2.clipicImg.style = '';
           _this2.clipicImg.src = '';
         }, 400);
+      }
+    }, {
+      key: 'done',
+      value: function done() {
+        var point = { x: this.newOptions.width / 2, y: this.newOptions.height / 2 };
+        var canvas = document.createElement('canvas');
+        canvas.width = this.newOptions.width;
+        canvas.height = this.newOptions.height;
+        var ctx = canvas.getContext('2d');
+        ctx.translate(this.translateX + point.x * (1 - this.scale), this.translateY + point.y * (1 - this.scale));
+        ctx.rotate(this.rotate * Math.PI / 180);
+        ctx.scale(this.scale, this.scale);
+        var w = void 0;
+        var h = void 0;
+        if (this.newOptions.ratio > this.originRatio) {
+          w = this.newOptions.width;
+          h = this.originH / (this.newOptions.width / this.originW);
+        } else {
+          h = this.newOptions.height;
+          w = this.originW * (this.newOptions.height / this.originH);
+        }
+        ctx.drawImage(this.clipicImg, 0, 0, w, h);
+        this.newOptions.onDone(canvas);
+        this.cancel();
       }
     }]);
     return Clipic;

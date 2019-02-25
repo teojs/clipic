@@ -6,6 +6,10 @@
   "directories": {
     "doc": "docs"
   },
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/teojs/clipic.git"
@@ -28,6 +32,7 @@
     "babel-preset-es2015-rollup": "^3.0.0",
     "babel-preset-latest": "^6.24.1",
     "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-uglify": "^6.0.2"
+    "rollup-plugin-uglify": "^6.0.2",
+    "rollup-watch": "^4.3.1"
   }
 }

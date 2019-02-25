@@ -5,6 +5,7 @@ class Clipic {
     this.clipicFrame = this.getId('clipicFrame')
     this.clipic = this.getId('clipic')
     this.clipicCancel = this.getId('clipicCancel')
+    this.clipicConfirm = this.getId('clipicConfirm')
     this.clipicImg = document.createElement('img')
     this.clipicFrame.appendChild(this.clipicImg)
   }
@@ -107,6 +108,9 @@ class Clipic {
       this.clipicCancel.addEventListener('click', () => {
         this.cancel()
       })
+      this.clipicConfirm.addEventListener('click', () => {
+        this.done()
+      })
       this.clipicFrame.addEventListener('touchmove', e => {
         if (e.touches.length > 1) {
           this.setScale(e.touches[0], e.touches[1])
@@ -174,12 +178,36 @@ class Clipic {
       this.scale
     }) rotate(${this.rotate}deg)`
   }
+
   cancel() {
     this.clipic.style['transform'] = 'translate(0, 100%)'
     setTimeout(() => {
       this.clipicImg.style = ''
       this.clipicImg.src = ''
     }, 400)
+  }
+
+  done() {
+    const point = { x: this.newOptions.width / 2, y: this.newOptions.height / 2 }
+    const canvas = document.createElement('canvas')
+    canvas.width = this.newOptions.width
+    canvas.height = this.newOptions.height
+    const ctx = canvas.getContext('2d')
+    ctx.translate(this.translateX + point.x * (1 - this.scale), this.translateY + point.y * (1 - this.scale))
+    ctx.rotate((this.rotate * Math.PI) / 180)
+    ctx.scale(this.scale, this.scale)
+    let w
+    let h
+    if (this.newOptions.ratio > this.originRatio) {
+      w = this.newOptions.width
+      h = this.originH / (this.newOptions.width / this.originW)
+    } else {
+      h = this.newOptions.height
+      w = this.originW * (this.newOptions.height / this.originH)
+    }
+    ctx.drawImage(this.clipicImg, 0, 0, w, h)
+    this.newOptions.onDone(canvas)
+    this.cancel()
   }
 }
 export default Clipic

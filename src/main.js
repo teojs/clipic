@@ -161,8 +161,8 @@ class Clipic {
       ctx.translate(-point.x, -point.y)
     }
     if (this.scale !== 0) {
-      ctx.scale(this.scale, this.scale)
       ctx.translate(point.x * (1 - this.scale), point.y * (1 - this.scale))
+      ctx.scale(this.scale, this.scale)
     }
     ctx.drawImage(this.clipicImg, 0, 0, w, h)
     this.newOptions.onDone(canvas.toDataURL('image/jpeg', 0.8))

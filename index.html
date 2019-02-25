@@ -130,7 +130,7 @@
             height: 1500,
             src: e.target.result,
             onDone: function(e) {
-              document.getElementById('previewImg').src = e.toDataURL('image/jpeg', 1)
+              document.getElementById('previewImg').src = e
               // console.log(e)
             }
           })
@@ -140,7 +140,7 @@
 
       ;(function() {
         var src = 'http://cdn.jsdelivr.net/npm/eruda'
-        if (/eruda=true/.test(window.location) && localStorage.getItem('active-eruda') != 'true') return
+        if (!/eruda=true/.test(window.location) && localStorage.getItem('active-eruda') != 'true') return
         document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>')
         document.write('<scr' + 'ipt>eruda.init();</scr' + 'ipt>')
       })()

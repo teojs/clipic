@@ -137,25 +137,35 @@ class Clipic {
   }
 
   done() {
-    const point = { x: this.newOptions.width / 2, y: this.newOptions.height / 2 }
+    const zommRatio = this.newOptions.width / this.clipicFrame.clientWidth
     const canvas = document.createElement('canvas')
     canvas.width = this.newOptions.width
     canvas.height = this.newOptions.height
     const ctx = canvas.getContext('2d')
-    ctx.translate(this.translateX + point.x * (1 - this.scale), this.translateY + point.y * (1 - this.scale))
-    ctx.rotate((this.rotate * Math.PI) / 180)
-    ctx.scale(this.scale, this.scale)
+    ctx.fillStyle = '#fff'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
     let w
     let h
     if (this.newOptions.ratio > this.originRatio) {
       w = this.newOptions.width
-      h = this.originH / (this.newOptions.width / this.originW)
+      h = this.originH / (this.originW / this.newOptions.width)
     } else {
       h = this.newOptions.height
-      w = this.originW * (this.newOptions.height / this.originH)
+      w = this.originW / (this.originH / this.newOptions.height)
+    }
+    const point = { x: w / 2, y: h / 2 }
+    ctx.translate(this.translateX * zommRatio, this.translateY * zommRatio)
+    if (this.rotate !== 0) {
+      ctx.translate(point.x, point.y)
+      ctx.rotate((this.rotate * Math.PI) / 180)
+      ctx.translate(-point.x, -point.y)
+    }
+    if (this.scale !== 0) {
+      ctx.scale(this.scale, this.scale)
+      ctx.translate(point.x * (1 - this.scale), point.y * (1 - this.scale))
     }
     ctx.drawImage(this.clipicImg, 0, 0, w, h)
-    this.newOptions.onDone(canvas)
+    this.newOptions.onDone(canvas.toDataURL('image/jpeg', 0.8))
     this.cancel()
   }
 }

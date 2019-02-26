@@ -18,66 +18,17 @@
         margin: 0;
         font-size: 1em;
       }
-      header {
+      .button {
+        width: 80%;
+        background: green;
+        color: #fff;
+        padding: 10px;
         text-align: center;
-        padding: 0.8em 0;
-      }
-      ul {
-        padding: 0;
-        list-style: none;
-        margin-top: 0;
-        background: #ffffff;
-        border-top: 1px solid #d7d7d7;
-        border-bottom: 1px solid #d7d7d7;
-      }
-      li {
-        padding: 0.8em 0;
-        display: flex;
-        position: relative;
-        justify-content: space-between;
-        padding-left: 1em;
-        align-items: center;
-        overflow: hidden;
-      }
-      li::before {
-        content: '';
-        height: 1px;
-        background: #d7d7d7;
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        left: 1em;
-        transform: scale(1, 0.5);
-      }
-      li:last-child::before {
-        display: none;
-      }
-      li .item-value {
-        color: #818181;
-        position: relative;
-      }
-      li .item-label {
-        flex: 1;
-        text-align: left;
-      }
-      li::after {
-        content: '';
-        width: 2em;
-        height: 1em;
-        background: url(./assets/right_arrow.png) no-repeat center center / contain;
-        display: inline-block;
-        vertical-align: middle;
-      }
-      li .item-value img {
-        width: 2.5em;
-        height: 2.5em;
+        margin: 20px auto;
         border-radius: 4px;
+        position: relative;
       }
-      li a {
-        color: inherit;
-        text-decoration: none;
-      }
-      li .upload-img {
+      .upload-img {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -91,31 +42,11 @@
     </style>
   </head>
   <body>
-    <header>个人信息</header>
     <section>
-      <ul>
-        <li>
-          <div class="item-label">头像</div>
-          <div class="item-value">
-            <img src="https://avatars1.githubusercontent.com/u/25993112?s=460&v=4" alt="头像" />
-            <input type="file" name="file" class="upload-img" accept="image/*" onchange="chooseImg(this)" />
-          </div>
-        </li>
-        <li>
-          <div class="item-label">名字</div>
-          <div class="item-value">Teo</div>
-        </li>
-        <li>
-          <div class="item-label">邮箱</div>
-          <div class="item-value"><a href="mailto:cheesen.xu@gmail.com">cheesen.xu@gmail.com</a></div>
-        </li>
-        <li>
-          <div class="item-label">Github</div>
-          <div class="item-value"><a href="https://github.com/teojs">@teojs</a></div>
-        </li>
-      </ul>
-      <h2>预览</h2>
       <img id="previewImg" src="https://avatars1.githubusercontent.com/u/25993112?s=460&v=4" alt="预览" />
+      <div class="button" role="button">
+        上传图片 <input type="file" name="file" class="upload-img" accept="image/*" onchange="chooseImg(this)" />
+      </div>
     </section>
     <script src="./dist/clipic.js"></script>
     <script>
@@ -126,24 +57,16 @@
         reader.readAsDataURL(files[0])
         reader.onload = e => {
           clipic.getImage({
-            width: 1200,
-            height: 800,
+            width: 1000,
+            height: 1000,
             src: e.target.result,
             onDone: function(e) {
               document.getElementById('previewImg').src = e
-              // console.log(e)
             }
           })
         }
         event.value = ''
       }
-
-      ;(function() {
-        var src = 'http://cdn.jsdelivr.net/npm/eruda'
-        if (!/eruda=true/.test(window.location) && localStorage.getItem('active-eruda') != 'true') return
-        document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>')
-        document.write('<scr' + 'ipt>eruda.init();</scr' + 'ipt>')
-      })()
     </script>
   </body>
 </html>

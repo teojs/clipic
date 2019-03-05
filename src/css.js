@@ -17,6 +17,7 @@ const css = `
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   z-index: 99;
+  overflow: hidden;
 }
 .clipic-body * {
   -webkit-box-sizing: border-box;
@@ -40,24 +41,19 @@ const css = `
   font-size: 1em;
 }
 .clipic-frame {
-  width: calc(100% - 60px);
-  height: 300px;
-  margin: 30px;
   background: #f2f2f2;
   position: absolute;
+  left: 50%;
+  top: 30px;
+  transform: translateX(-50%);
+  transition: 0.3s;
 }
 .clipic-frame img {
   -webkit-touch-callout: none;
   pointer-events: none;
-  -webkit-filter: blur(2px);
-          filter: blur(2px);
 }
 .clipic-frame-show {
   overflow: hidden;
-}
-.clipic-frame-show img {
-  -webkit-filter: blur(0);
-          filter: blur(0);
 }
 .clipic-cancel {
   color: #3680fd;
@@ -71,7 +67,7 @@ const css = `
   height: 100%;
   top: 0;
   left: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.8);
   pointer-events: none;
 }
 `

@@ -57,9 +57,10 @@
         reader.readAsDataURL(files[0])
         reader.onload = e => {
           clipic.getImage({
-            width: 1000,
-            height: 1000,
-            src: e.target.result,
+            width: 500,
+            height: 400,
+            // ratio: 4 / 3,
+            src: 'https://avatars1.githubusercontent.com/u/25993112?s=460&v=4',
             onDone: function(e) {
               document.getElementById('previewImg').src = e
             }

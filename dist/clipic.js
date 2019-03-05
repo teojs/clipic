@@ -4,7 +4,7 @@
   (global = global || self, global.Clipic = factory());
 }(this, function () { 'use strict';
 
-  var css = "\n.clipic-body {\n  background: #1c1c1c;\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  -webkit-transform: translate(0, 100%);\n      -ms-transform: translate(0, 100%);\n          transform: translate(0, 100%);\n  -webkit-transition: 0.4s;\n  -o-transition: 0.4s;\n  transition: 0.4s;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n  z-index: 99;\n}\n.clipic-body * {\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n.clipic-operation-bar {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  color: #f2f2f2;\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n  position: absolute;\n  width: 100%;\n  bottom: 0;\n  left: 0;\n}\n.clipic-operation-bar [role=\"button\"] {\n  padding: 15px 20px;\n  font-size: 1em;\n}\n.clipic-frame {\n  width: calc(100% - 60px);\n  height: 300px;\n  margin: 30px;\n  background: #f2f2f2;\n  position: absolute;\n}\n.clipic-frame img {\n  -webkit-touch-callout: none;\n  pointer-events: none;\n  -webkit-filter: blur(2px);\n          filter: blur(2px);\n}\n.clipic-frame-show {\n  overflow: hidden;\n}\n.clipic-frame-show img {\n  -webkit-filter: blur(0);\n          filter: blur(0);\n}\n.clipic-cancel {\n  color: #3680fd;\n}\n.clipic-confirm{\n  color: #23c667;\n}\n.clipic-layer {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  background: rgba(0,0,0,0.5);\n  pointer-events: none;\n}\n";
+  var css = "\n.clipic-body {\n  background: #1c1c1c;\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  -webkit-transform: translate(0, 100%);\n      -ms-transform: translate(0, 100%);\n          transform: translate(0, 100%);\n  -webkit-transition: 0.4s;\n  -o-transition: 0.4s;\n  transition: 0.4s;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n  z-index: 99;\n  overflow: hidden;\n}\n.clipic-body * {\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n.clipic-operation-bar {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  color: #f2f2f2;\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n  position: absolute;\n  width: 100%;\n  bottom: 0;\n  left: 0;\n}\n.clipic-operation-bar [role=\"button\"] {\n  padding: 15px 20px;\n  font-size: 1em;\n}\n.clipic-frame {\n  background: #f2f2f2;\n  position: absolute;\n  left: 50%;\n  top: 30px;\n  transform: translateX(-50%);\n  transition: 0.3s;\n}\n.clipic-frame img {\n  -webkit-touch-callout: none;\n  pointer-events: none;\n}\n.clipic-frame-show {\n  overflow: hidden;\n}\n.clipic-cancel {\n  color: #3680fd;\n}\n.clipic-confirm{\n  color: #23c667;\n}\n.clipic-layer {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  background: rgba(0,0,0,0.8);\n  pointer-events: none;\n}\n";
 
   var dom = "\n    <div class=\"clipic-frame\" id=\"clipicFrame1\"><img id=\"clipicImg1\"></div>\n    <div class=\"clipic-layer\"></div>\n    <div class=\"clipic-frame clipic-frame-show\" id=\"clipicFrame2\"><img id=\"clipicImg2\"></div>\n    <div class=\"clipic-operation-bar\">\n      <div class=\"clipic-cancel\" id=\"clipicCancel\" role=\"button\">\u53D6\u6D88</div>\n      <div class=\"clipic-confirm\" id=\"clipicConfirm\" role=\"button\">\u5B8C\u6210</div>\n    </div>\n  ";
 
@@ -33,18 +33,24 @@
   }();
 
   var Clipic = function () {
-    function Clipic(options) {
+    function Clipic() {
       classCallCheck(this, Clipic);
 
-      this.options = options;
-      this.init();
-      this.clipicFrame1 = this.getId('clipicFrame1');
-      this.clipicFrame2 = this.getId('clipicFrame2');
-      this.clipicImg1 = this.getId('clipicImg1');
-      this.clipicImg2 = this.getId('clipicImg2');
+      this.default = {
+        width: 500, // 裁剪宽度
+        height: 500, //裁剪高度
+        src: '', // 需要裁剪的图片
+        type: 'jpeg', // 裁剪后图片的类型，仅支持jpeg/png两种
+        quality: 0.9 // 压缩质量
+      };
+      this.init(); // 初始化，渲染dom跟css
       this.clipic = this.getId('clipic');
-      this.clipicCancel = this.getId('clipicCancel');
-      this.clipicConfirm = this.getId('clipicConfirm');
+      this.clipicImg1 = this.getId('clipicImg1'); // 背景图
+      this.clipicImg2 = this.getId('clipicImg2'); // 前景图
+      this.clipicFrame1 = this.getId('clipicFrame1'); // 背景操作框
+      this.clipicFrame2 = this.getId('clipicFrame2'); // 前景操作框
+      this.clipicCancel = this.getId('clipicCancel'); // 取消按钮
+      this.clipicConfirm = this.getId('clipicConfirm'); // 完成按钮
     }
 
     createClass(Clipic, [{
@@ -82,30 +88,22 @@
 
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-        this.scale = 1;
-        this.rotate = 0;
-        this.translateX = 0;
-        this.translateY = 0;
-        this.touchStartTime = 0;
-        this.touchEndTime = 0;
-        this.touchStartX = 0;
-        this.touchStartY = 0;
-        this.touchEndX = 0;
-        this.touchEndY = 0;
-        this.scrollX = 0;
-        this.scrollY = 0;
-        this.scrollTimes = [];
-        this.newOptions = Object.assign(this.options || {}, options);
-        this.newOptions.ratio = this.newOptions.ratio || this.newOptions.width / this.newOptions.height;
-        this.clipicFrame2.style.height = this.clipicFrame2.clientWidth / this.newOptions.ratio + 'px';
-        this.clipicImg1.src = this.newOptions.src;
-        this.clipicImg2.src = this.newOptions.src;
+        // 初始化参数
+        this.scale = 1; // 缩放
+        this.rotate = 0; // 旋转
+        this.translateX = 0; // 水平偏移
+        this.translateY = 0; // 垂直偏移
+        this.options = Object.assign(this.default || {}, options);
+        this.options.ratio = this.options.ratio || this.options.width / this.options.height;
+        this.clipicImg2.crossOrigin = 'Anonymous';
+        this.clipicImg1.src = this.options.src;
+        this.clipicImg2.src = this.options.src;
         this.clipicImg2.onload = function () {
           _this.originW = _this.clipicImg2.width;
           _this.originH = _this.clipicImg2.height;
           _this.originRatio = _this.originW / _this.originH;
           _this.initSize();
-          _this.clipic.style['transform'] = 'translate(0, 0)';
+          _this.clipic.style.transform = 'translate(0, 0)';
           _this.clipicCancel.addEventListener('click', function () {
             _this.cancel();
           });
@@ -115,40 +113,38 @@
           _this.clipicFrame2.addEventListener('dblclick', function () {
             console.log(_this.scale);
           });
-          _this.clipicFrame2.addEventListener('touchstart', function (e) {
-            _this.touchStartX = e.touches[0].clientX;
-            _this.touchStartY = e.touches[0].clientY;
-            clearTimeout(_this.ST);
-          });
           _this.clipicFrame2.addEventListener('touchmove', function (e) {
-            _this.scrollTimes.push(e.timeStamp);
             if (e.touches.length > 1) {
               _this.setScale(e.touches[0], e.touches[1]);
               _this.setRotate(e.touches[0], e.touches[1]);
               return;
             }
             _this.setTranslate(e.touches[0]);
-            _this.scrollX = e.touches[0].clientX - _this.touchStartX;
-            _this.scrollY = e.touches[0].clientY - _this.touchStartY;
-            _this.touchStartTime = Date.now();
-            _this.touchStartX = e.touches[0].clientX;
-            _this.touchStartY = e.touches[0].clientY;
           });
           _this.clipicFrame2.addEventListener('touchend', function (e) {
             _this.distance = null;
             _this.angle = null;
             _this.moveX = null;
             _this.moveY = null;
-            _this.touchEndTime = Date.now();
-            _this.scrollTimes.push(e.timeStamp);
-            // this.scroll(e.changedTouches[0])
           });
         };
       }
     }, {
       key: 'initSize',
       value: function initSize() {
-        if (this.newOptions.ratio > this.originRatio) {
+        var cw = document.body.clientWidth - 60;
+        var ch = document.body.clientHeight - 80;
+        this.clipicFrame1.style.width = cw + 'px';
+        this.clipicFrame1.style.height = cw / this.options.ratio + 'px';
+        this.clipicFrame2.style.width = cw + 'px';
+        this.clipicFrame2.style.height = cw / this.options.ratio + 'px';
+        if (cw / this.options.ratio > ch) {
+          this.clipicFrame1.style.height = ch + 'px';
+          this.clipicFrame1.style.width = ch * this.options.ratio + 'px';
+          this.clipicFrame2.style.height = ch + 'px';
+          this.clipicFrame2.style.width = ch * this.options.ratio + 'px';
+        }
+        if (this.options.ratio > this.originRatio) {
           this.clipicImg1.style.width = this.clipicFrame2.clientWidth + 'px';
           this.clipicImg2.style.width = this.clipicFrame2.clientWidth + 'px';
         } else {
@@ -193,12 +189,6 @@
         }
         this.moveX = x;
         this.moveY = y;
-        // if (this.translateX > 0) {
-        //   this.translateX = 0
-        // }
-        // if (this.translateY > 0) {
-        //   this.translateY = 0
-        // }
         this.setTransform();
       }
     }, {
@@ -224,21 +214,21 @@
     }, {
       key: 'done',
       value: function done() {
-        var zommRatio = this.newOptions.width / this.clipicFrame2.clientWidth;
+        var zommRatio = this.options.width / this.clipicFrame2.clientWidth;
         var canvas = document.createElement('canvas');
-        canvas.width = this.newOptions.width;
-        canvas.height = this.newOptions.height;
+        canvas.width = this.options.width;
+        canvas.height = this.options.height;
         var ctx = canvas.getContext('2d');
         ctx.fillStyle = '#fff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         var w = void 0;
         var h = void 0;
-        if (this.newOptions.ratio > this.originRatio) {
-          w = this.newOptions.width;
-          h = this.originH / (this.originW / this.newOptions.width);
+        if (this.options.ratio > this.originRatio) {
+          w = this.options.width;
+          h = this.originH / (this.originW / this.options.width);
         } else {
-          h = this.newOptions.height;
-          w = this.originW / (this.originH / this.newOptions.height);
+          h = this.options.height;
+          w = this.originW / (this.originH / this.options.height);
         }
         var point = { x: w / 2, y: h / 2 };
         ctx.translate(this.translateX * zommRatio, this.translateY * zommRatio);
@@ -252,7 +242,12 @@
           ctx.scale(this.scale, this.scale);
         }
         ctx.drawImage(this.clipicImg2, 0, 0, w, h);
-        this.newOptions.onDone(canvas.toDataURL('image/jpeg', 0.8));
+        if (this.options.onDone) {
+          this.options.onDone(canvas.toDataURL('image/' + this.options.type, this.options.quality));
+        }
+        if (this.options.onCancel) {
+          this.options.onCancel();
+        }
         this.cancel();
       }
     }]);

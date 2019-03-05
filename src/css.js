@@ -72,6 +72,7 @@ const css = `
   left: 0;
   background: rgba(0,0,0,0.8);
   pointer-events: none;
+  transform: translate3D(0,0,0);
 }
 `
 export default css

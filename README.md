@@ -1,5 +1,8 @@
 # Clipic.js
 
+![avatar](https://img.shields.io/github/package-json/v/teojs/clipic.svg)
+![avatar](https://img.shields.io/github/size/teojs/clipic/dist/clipic.min.js.svg)
+
 > 移动端图片裁剪工具，适用于上传头像并裁剪成指定尺寸
 
 用手机访问此页面体验：[https://teojs.github.io/clipic](https://teojs.github.io/clipic "Clipic.js")

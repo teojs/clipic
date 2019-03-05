@@ -4,9 +4,9 @@
   (global = global || self, global.Clipic = factory());
 }(this, function () { 'use strict';
 
-  var css = "\n  .clipic-body {\n    background: #1c1c1c;\n    position: fixed;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    transform: translate(0, 100%);\n    transition: 0.4s;\n    -webkit-touch-callout: none;\n    -webkit-user-select: none;\n    box-sizing: border-box;\n    z-index: 99;\n  }\n  .clipic-body * {\n    box-sizing: border-box;\n  }\n  .clipic-operation-bar {\n    display: flex;\n    color: #f2f2f2;\n    justify-content: space-between;\n    position: absolute;\n    width: 100%;\n    bottom: 0;\n    left: 0;\n  }\n  .clipic-operation-bar [role=\"button\"] {\n    padding: 15px 20px;\n    font-size: 1em;\n  }\n  .clipic-frame {\n    height: 300px;\n    margin: 30px;\n    background: #f2f2f2;\n    overflow: hidden;\n  }\n  .clipic-frame img {\n    -webkit-touch-callout: none;\n  }\n  .clipic-cancel {\n    color: #3680fd;\n  }\n  .clipic-confirm{\n    color: #23c667;\n  }\n";
+  var css = "\n.clipic-body {\n  background: #1c1c1c;\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  -webkit-transform: translate(0, 100%);\n      -ms-transform: translate(0, 100%);\n          transform: translate(0, 100%);\n  -webkit-transition: 0.4s;\n  -o-transition: 0.4s;\n  transition: 0.4s;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n  z-index: 99;\n}\n.clipic-body * {\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n.clipic-operation-bar {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  color: #f2f2f2;\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n  position: absolute;\n  width: 100%;\n  bottom: 0;\n  left: 0;\n}\n.clipic-operation-bar [role=\"button\"] {\n  padding: 15px 20px;\n  font-size: 1em;\n}\n.clipic-frame {\n  width: calc(100% - 60px);\n  height: 300px;\n  margin: 30px;\n  background: #f2f2f2;\n  position: absolute;\n}\n.clipic-frame img {\n  -webkit-touch-callout: none;\n  pointer-events: none;\n  -webkit-filter: blur(2px);\n          filter: blur(2px);\n}\n.clipic-frame-show {\n  overflow: hidden;\n}\n.clipic-frame-show img {\n  -webkit-filter: blur(0);\n          filter: blur(0);\n}\n.clipic-cancel {\n  color: #3680fd;\n}\n.clipic-confirm{\n  color: #23c667;\n}\n.clipic-layer {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  background: rgba(0,0,0,0.5);\n  pointer-events: none;\n}\n";
 
-  var dom = "\n    <div class=\"clipic-frame\" id=\"clipicFrame\"></div>\n    <div class=\"clipic-operation-bar\">\n      <div class=\"clipic-cancel\" id=\"clipicCancel\" role=\"button\">\u53D6\u6D88</div>\n      <div class=\"clipic-confirm\" id=\"clipicConfirm\" role=\"button\">\u5B8C\u6210</div>\n    </div>\n  ";
+  var dom = "\n    <div class=\"clipic-frame\" id=\"clipicFrame1\"><img id=\"clipicImg1\"></div>\n    <div class=\"clipic-layer\"></div>\n    <div class=\"clipic-frame clipic-frame-show\" id=\"clipicFrame2\"><img id=\"clipicImg2\"></div>\n    <div class=\"clipic-operation-bar\">\n      <div class=\"clipic-cancel\" id=\"clipicCancel\" role=\"button\">\u53D6\u6D88</div>\n      <div class=\"clipic-confirm\" id=\"clipicConfirm\" role=\"button\">\u5B8C\u6210</div>\n    </div>\n  ";
 
   var classCallCheck = function (instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -38,12 +38,13 @@
 
       this.options = options;
       this.init();
-      this.clipicFrame = this.getId('clipicFrame');
+      this.clipicFrame1 = this.getId('clipicFrame1');
+      this.clipicFrame2 = this.getId('clipicFrame2');
+      this.clipicImg1 = this.getId('clipicImg1');
+      this.clipicImg2 = this.getId('clipicImg2');
       this.clipic = this.getId('clipic');
       this.clipicCancel = this.getId('clipicCancel');
       this.clipicConfirm = this.getId('clipicConfirm');
-      this.clipicImg = document.createElement('img');
-      this.clipicFrame.appendChild(this.clipicImg);
     }
 
     createClass(Clipic, [{
@@ -85,13 +86,23 @@
         this.rotate = 0;
         this.translateX = 0;
         this.translateY = 0;
+        this.touchStartTime = 0;
+        this.touchEndTime = 0;
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+        this.touchEndX = 0;
+        this.touchEndY = 0;
+        this.scrollX = 0;
+        this.scrollY = 0;
+        this.scrollTimes = [];
         this.newOptions = Object.assign(this.options || {}, options);
         this.newOptions.ratio = this.newOptions.ratio || this.newOptions.width / this.newOptions.height;
-        this.clipicFrame.style.height = this.clipicFrame.clientWidth / this.newOptions.ratio + 'px';
-        this.clipicImg.src = this.newOptions.src;
-        this.clipicImg.onload = function () {
-          _this.originW = _this.clipicImg.width;
-          _this.originH = _this.clipicImg.height;
+        this.clipicFrame2.style.height = this.clipicFrame2.clientWidth / this.newOptions.ratio + 'px';
+        this.clipicImg1.src = this.newOptions.src;
+        this.clipicImg2.src = this.newOptions.src;
+        this.clipicImg2.onload = function () {
+          _this.originW = _this.clipicImg2.width;
+          _this.originH = _this.clipicImg2.height;
           _this.originRatio = _this.originW / _this.originH;
           _this.initSize();
           _this.clipic.style['transform'] = 'translate(0, 0)';
@@ -101,19 +112,36 @@
           _this.clipicConfirm.addEventListener('click', function () {
             _this.done();
           });
-          _this.clipicFrame.addEventListener('touchmove', function (e) {
+          _this.clipicFrame2.addEventListener('dblclick', function () {
+            console.log(_this.scale);
+          });
+          _this.clipicFrame2.addEventListener('touchstart', function (e) {
+            _this.touchStartX = e.touches[0].clientX;
+            _this.touchStartY = e.touches[0].clientY;
+            clearTimeout(_this.ST);
+          });
+          _this.clipicFrame2.addEventListener('touchmove', function (e) {
+            _this.scrollTimes.push(e.timeStamp);
             if (e.touches.length > 1) {
               _this.setScale(e.touches[0], e.touches[1]);
               _this.setRotate(e.touches[0], e.touches[1]);
               return;
             }
             _this.setTranslate(e.touches[0]);
+            _this.scrollX = e.touches[0].clientX - _this.touchStartX;
+            _this.scrollY = e.touches[0].clientY - _this.touchStartY;
+            _this.touchStartTime = Date.now();
+            _this.touchStartX = e.touches[0].clientX;
+            _this.touchStartY = e.touches[0].clientY;
           });
-          _this.clipicFrame.addEventListener('touchend', function (e) {
+          _this.clipicFrame2.addEventListener('touchend', function (e) {
             _this.distance = null;
             _this.angle = null;
             _this.moveX = null;
             _this.moveY = null;
+            _this.touchEndTime = Date.now();
+            _this.scrollTimes.push(e.timeStamp);
+            // this.scroll(e.changedTouches[0])
           });
         };
       }
@@ -121,9 +149,11 @@
       key: 'initSize',
       value: function initSize() {
         if (this.newOptions.ratio > this.originRatio) {
-          this.clipicImg.style.width = this.clipicFrame.clientWidth + 'px';
+          this.clipicImg1.style.width = this.clipicFrame2.clientWidth + 'px';
+          this.clipicImg2.style.width = this.clipicFrame2.clientWidth + 'px';
         } else {
-          this.clipicImg.style.height = this.clipicFrame.clientHeight + 'px';
+          this.clipicImg1.style.height = this.clipicFrame2.clientHeight + 'px';
+          this.clipicImg2.style.height = this.clipicFrame2.clientHeight + 'px';
         }
       }
     }, {
@@ -133,7 +163,7 @@
         var y = Math.abs(touches1.clientY - touches2.clientY);
         var s = Math.sqrt(x * x + y * y);
         if (this.distance) {
-          this.scale += (s - this.distance) / this.clipicImg.clientWidth;
+          this.scale += (s - this.distance) / this.clipicImg2.clientWidth;
           this.setTransform();
         }
         this.distance = s;
@@ -152,9 +182,9 @@
       }
     }, {
       key: 'setTranslate',
-      value: function setTranslate(touches1, touches2) {
-        var x = touches1.clientX;
-        var y = touches1.clientY;
+      value: function setTranslate(touches) {
+        var x = touches.clientX;
+        var y = touches.clientY;
         if (this.moveX) {
           this.translateX += x - this.moveX;
         }
@@ -163,28 +193,38 @@
         }
         this.moveX = x;
         this.moveY = y;
+        // if (this.translateX > 0) {
+        //   this.translateX = 0
+        // }
+        // if (this.translateY > 0) {
+        //   this.translateY = 0
+        // }
         this.setTransform();
       }
     }, {
       key: 'setTransform',
       value: function setTransform() {
-        this.clipicImg.style['transform'] = 'translate(' + this.translateX + 'px, ' + this.translateY + 'px) scale(' + this.scale + ') rotate(' + this.rotate + 'deg)';
+        var transform = 'translate(' + this.translateX + 'px, ' + this.translateY + 'px) scale(' + this.scale + ') rotate(' + this.rotate + 'deg)';
+        this.clipicImg1.style.transform = transform;
+        this.clipicImg2.style.transform = transform;
       }
     }, {
       key: 'cancel',
       value: function cancel() {
         var _this2 = this;
 
-        this.clipic.style['transform'] = 'translate(0, 100%)';
+        this.clipic.style.transform = 'translate(0, 100%)';
         setTimeout(function () {
-          _this2.clipicImg.style = '';
-          _this2.clipicImg.src = '';
+          _this2.clipicImg1.style = '';
+          _this2.clipicImg1.src = '';
+          _this2.clipicImg2.style = '';
+          _this2.clipicImg2.src = '';
         }, 400);
       }
     }, {
       key: 'done',
       value: function done() {
-        var zommRatio = this.newOptions.width / this.clipicFrame.clientWidth;
+        var zommRatio = this.newOptions.width / this.clipicFrame2.clientWidth;
         var canvas = document.createElement('canvas');
         canvas.width = this.newOptions.width;
         canvas.height = this.newOptions.height;
@@ -211,7 +251,7 @@
           ctx.translate(point.x * (1 - this.scale), point.y * (1 - this.scale));
           ctx.scale(this.scale, this.scale);
         }
-        ctx.drawImage(this.clipicImg, 0, 0, w, h);
+        ctx.drawImage(this.clipicImg2, 0, 0, w, h);
         this.newOptions.onDone(canvas.toDataURL('image/jpeg', 0.8));
         this.cancel();
       }

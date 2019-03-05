@@ -4,12 +4,13 @@ class Clipic {
   constructor(options) {
     this.options = options
     this.init()
-    this.clipicFrame = this.getId('clipicFrame')
+    this.clipicFrame1 = this.getId('clipicFrame1')
+    this.clipicFrame2 = this.getId('clipicFrame2')
+    this.clipicImg1 = this.getId('clipicImg1')
+    this.clipicImg2 = this.getId('clipicImg2')
     this.clipic = this.getId('clipic')
     this.clipicCancel = this.getId('clipicCancel')
     this.clipicConfirm = this.getId('clipicConfirm')
-    this.clipicImg = document.createElement('img')
-    this.clipicFrame.appendChild(this.clipicImg)
   }
 
   init() {
@@ -32,7 +33,7 @@ class Clipic {
   }
 
   createHtml() {
-    var div = document.createElement('div')
+    const div = document.createElement('div')
     div.className = 'clipic-body'
     div.setAttribute('id', 'clipic')
     div.innerHTML = dom
@@ -44,13 +45,23 @@ class Clipic {
     this.rotate = 0
     this.translateX = 0
     this.translateY = 0
+    this.touchStartTime = 0
+    this.touchEndTime = 0
+    this.touchStartX = 0
+    this.touchStartY = 0
+    this.touchEndX = 0
+    this.touchEndY = 0
+    this.scrollX = 0
+    this.scrollY = 0
+    this.scrollTimes = []
     this.newOptions = Object.assign(this.options || {}, options)
     this.newOptions.ratio = this.newOptions.ratio || this.newOptions.width / this.newOptions.height
-    this.clipicFrame.style.height = this.clipicFrame.clientWidth / this.newOptions.ratio + 'px'
-    this.clipicImg.src = this.newOptions.src
-    this.clipicImg.onload = () => {
-      this.originW = this.clipicImg.width
-      this.originH = this.clipicImg.height
+    this.clipicFrame2.style.height = this.clipicFrame2.clientWidth / this.newOptions.ratio + 'px'
+    this.clipicImg1.src = this.newOptions.src
+    this.clipicImg2.src = this.newOptions.src
+    this.clipicImg2.onload = () => {
+      this.originW = this.clipicImg2.width
+      this.originH = this.clipicImg2.height
       this.originRatio = this.originW / this.originH
       this.initSize()
       this.clipic.style['transform'] = 'translate(0, 0)'
@@ -60,28 +71,47 @@ class Clipic {
       this.clipicConfirm.addEventListener('click', () => {
         this.done()
       })
-      this.clipicFrame.addEventListener('touchmove', e => {
+      this.clipicFrame2.addEventListener('dblclick', () => {
+        console.log(this.scale)
+      })
+      this.clipicFrame2.addEventListener('touchstart', e => {
+        this.touchStartX = e.touches[0].clientX
+        this.touchStartY = e.touches[0].clientY
+        clearTimeout(this.ST)
+      })
+      this.clipicFrame2.addEventListener('touchmove', e => {
+        this.scrollTimes.push(e.timeStamp)
         if (e.touches.length > 1) {
           this.setScale(e.touches[0], e.touches[1])
           this.setRotate(e.touches[0], e.touches[1])
           return
         }
         this.setTranslate(e.touches[0])
+        this.scrollX = e.touches[0].clientX - this.touchStartX
+        this.scrollY = e.touches[0].clientY - this.touchStartY
+        this.touchStartTime = Date.now()
+        this.touchStartX = e.touches[0].clientX
+        this.touchStartY = e.touches[0].clientY
       })
-      this.clipicFrame.addEventListener('touchend', e => {
+      this.clipicFrame2.addEventListener('touchend', e => {
         this.distance = null
         this.angle = null
         this.moveX = null
         this.moveY = null
+        this.touchEndTime = Date.now()
+        this.scrollTimes.push(e.timeStamp)
+        // this.scroll(e.changedTouches[0])
       })
     }
   }
 
   initSize() {
     if (this.newOptions.ratio > this.originRatio) {
-      this.clipicImg.style.width = this.clipicFrame.clientWidth + 'px'
+      this.clipicImg1.style.width = this.clipicFrame2.clientWidth + 'px'
+      this.clipicImg2.style.width = this.clipicFrame2.clientWidth + 'px'
     } else {
-      this.clipicImg.style.height = this.clipicFrame.clientHeight + 'px'
+      this.clipicImg1.style.height = this.clipicFrame2.clientHeight + 'px'
+      this.clipicImg2.style.height = this.clipicFrame2.clientHeight + 'px'
     }
   }
 
@@ -90,7 +120,7 @@ class Clipic {
     const y = Math.abs(touches1.clientY - touches2.clientY)
     const s = Math.sqrt(x * x + y * y)
     if (this.distance) {
-      this.scale += (s - this.distance) / this.clipicImg.clientWidth
+      this.scale += (s - this.distance) / this.clipicImg2.clientWidth
       this.setTransform()
     }
     this.distance = s
@@ -108,9 +138,9 @@ class Clipic {
     this.angle = angle
   }
 
-  setTranslate(touches1, touches2) {
-    const x = touches1.clientX
-    const y = touches1.clientY
+  setTranslate(touches) {
+    const x = touches.clientX
+    const y = touches.clientY
     if (this.moveX) {
       this.translateX += x - this.moveX
     }
@@ -119,25 +149,35 @@ class Clipic {
     }
     this.moveX = x
     this.moveY = y
+    // if (this.translateX > 0) {
+    //   this.translateX = 0
+    // }
+    // if (this.translateY > 0) {
+    //   this.translateY = 0
+    // }
     this.setTransform()
   }
 
   setTransform() {
-    this.clipicImg.style['transform'] = `translate(${this.translateX}px, ${this.translateY}px) scale(${
-      this.scale
-    }) rotate(${this.rotate}deg)`
+    const transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale}) rotate(${
+      this.rotate
+    }deg)`
+    this.clipicImg1.style.transform = transform
+    this.clipicImg2.style.transform = transform
   }
 
   cancel() {
-    this.clipic.style['transform'] = 'translate(0, 100%)'
+    this.clipic.style.transform = 'translate(0, 100%)'
     setTimeout(() => {
-      this.clipicImg.style = ''
-      this.clipicImg.src = ''
+      this.clipicImg1.style = ''
+      this.clipicImg1.src = ''
+      this.clipicImg2.style = ''
+      this.clipicImg2.src = ''
     }, 400)
   }
 
   done() {
-    const zommRatio = this.newOptions.width / this.clipicFrame.clientWidth
+    const zommRatio = this.newOptions.width / this.clipicFrame2.clientWidth
     const canvas = document.createElement('canvas')
     canvas.width = this.newOptions.width
     canvas.height = this.newOptions.height
@@ -164,7 +204,7 @@ class Clipic {
       ctx.translate(point.x * (1 - this.scale), point.y * (1 - this.scale))
       ctx.scale(this.scale, this.scale)
     }
-    ctx.drawImage(this.clipicImg, 0, 0, w, h)
+    ctx.drawImage(this.clipicImg2, 0, 0, w, h)
     this.newOptions.onDone(canvas.toDataURL('image/jpeg', 0.8))
     this.cancel()
   }

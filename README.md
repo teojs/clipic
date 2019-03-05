@@ -8,16 +8,16 @@
 
 ![avatar](./src/assets/qrcode.png)
 
-## 安装
+## npm方式
 
 ```bath
-npm install clipic -S
+$ npm install clipic
 ```
 
-## 直接引入
+## cdn引入
 
 ```html
-<script src="./dist/clipic.min.js"></script>
+<script src="https://unpkg.com/clipic/dist/clipic.min.js"></script>
 ```
 
 ## 使用

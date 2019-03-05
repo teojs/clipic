@@ -178,7 +178,10 @@ class Clipic {
   }
 
   reset() {
-    this.getImage()
+    this.scale = 1
+    this.rotate = 0
+    this.translateX = 0
+    this.translateY = 0
     this.img1.style.transition = '0.3s'
     this.img2.style.transition = '0.3s'
     this.setTransform()

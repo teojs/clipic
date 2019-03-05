@@ -1,6 +1,12 @@
 # Clipic.js
 
-移动端图片裁剪工具，适用于上传头像并裁剪成指定尺寸
+> 移动端图片裁剪工具，适用于上传头像并裁剪成指定尺寸
+
+用手机访问此页面体验：[https://teojs.github.io/clipic](https://teojs.github.io/clipic "Clipic.js")
+
+或者用手机扫此二维码进入
+
+![avatar](./src/assets/qrcode.png)
 
 ## 安装
 

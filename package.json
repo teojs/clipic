@@ -17,7 +17,9 @@
   "keywords": [
     "image",
     "picture",
-    "clip"
+    "clip",
+    "图片裁剪",
+    "头像裁剪"
   ],
   "author": "Teo <cheesen.xu@gmail.com>",
   "license": "ISC",

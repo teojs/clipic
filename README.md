@@ -46,9 +46,10 @@ clipic.getImage({
 
 ## 参数说明
 
-- `width:number` (默认：500) -- 裁剪宽度
-- `height:number` (默认：500) -- 裁剪高度
-- `ratio:number` (可选) -- 裁剪的比例，当传入`ratio`时`width/height`将无效
-- `src:string` (必传) -- 需要裁剪的图片，可以是图片链接，或者 base64
-- `type:string` (默认：jpeg) -- 裁剪后图片的类型，仅支持 jpeg/png 两种
-- `quality:number` (默认：0.9) -- 压缩质量
+- `width:Number` (默认：500) -- 裁剪宽度
+- `height:Number` (默认：500) -- 裁剪高度
+- `ratio:Number` (可选) -- 裁剪的比例，当传入`ratio`时`width/height`将无效
+- `src:String` (必传) -- 需要裁剪的图片，可以是图片链接，或者 base64
+- `type:String` (默认：jpeg) -- 裁剪后图片的类型，仅支持 jpeg/png 两种
+- `quality:Number` (默认：0.9) -- 压缩质量
+- `buttonText:Array` (默认：['取消', '重置', '完成']) -- 底部三个按钮文本

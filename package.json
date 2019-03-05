@@ -1,6 +1,6 @@
 {
   "name": "clipic",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "移动端图片裁剪工具",
   "main": "./dist/clipic.js",
   "directories": {

@@ -56,6 +56,9 @@ const css = `
   overflow: hidden;
 }
 .clipic-cancel {
+  color: #e04c4c;
+}
+.clipic-reset{
   color: #3680fd;
 }
 .clipic-confirm{

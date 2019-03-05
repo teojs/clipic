@@ -5,19 +5,19 @@
 
 > 移动端图片裁剪工具，适用于上传头像并裁剪成指定尺寸
 
-用手机访问此页面体验：[https://teojs.github.io/clipic](https://teojs.github.io/clipic "Clipic.js")
+用手机访问此页面体验：[https://teojs.github.io/clipic](https://teojs.github.io/clipic 'Clipic.js')
 
 或者用手机扫此二维码进入
 
 ![avatar](./src/assets/qrcode.png)
 
-## npm方式
+## npm 方式
 
 ```bath
 $ npm install clipic
 ```
 
-## cdn引入
+## cdn 引入
 
 ```html
 <script src="https://unpkg.com/clipic/dist/clipic.min.js"></script>

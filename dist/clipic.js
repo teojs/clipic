@@ -58,8 +58,10 @@
     createClass(Clipic, [{
       key: 'init',
       value: function init() {
-        this.createStyle();
-        this.createHtml();
+        if (!this.getId('clipic')) {
+          this.createStyle();
+          this.createHtml();
+        }
       }
     }, {
       key: 'getId',
@@ -265,7 +267,7 @@
           ctx.rotate(this.rotate * Math.PI / 180);
           ctx.translate(-point.x, -point.y);
         }
-        if (this.scale !== 0) {
+        if (this.scale !== 1) {
           ctx.translate(point.x * (1 - this.scale), point.y * (1 - this.scale));
           ctx.scale(this.scale, this.scale);
         }

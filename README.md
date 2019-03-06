@@ -17,31 +17,67 @@
 $ npm install clipic
 ```
 
-## cdn 引入
+在 vue 项目里使用
 
 ```html
-<script src="https://unpkg.com/clipic/dist/clipic.min.js"></script>
+// xxx.vue
+<template>
+  <img :src="base64" />
+  <input type="file" name="file" accept="image/*" @change="uploadImg" />
+</template>
+<script>
+  import Clipic from 'clipic'
+  const clipic = new Clipic()
+  export default {
+    data () {
+      return {
+        base64: ''
+      }
+    }
+    methods: {
+      uploadImg(event) {
+        const files = event.files
+        const reader = new FileReader()
+        reader.readAsDataURL(files[0])
+        reader.onload = img => {
+          clipic.getImage({
+            width: 500,
+            height: 400,
+            src: img.target.result,
+            onDone: base64 => {
+              this.base64 = base64
+            }
+          })
+        }
+        event.value = ''
+      }
+    }
+  }
+</script>
 ```
 
-## 使用
+## cdn 方式
 
-```js
-import Clipic from 'clipic'
-const clipic = new Clipic()
-clipic.getImage({
-  width: 500,
-  height: 400,
-  // ratio: 4 / 3,
-  src: 'xxx',
-  type: 'jpeg',
-  quality: 0.8,
-  onDone: function(base64) {
-    // ...
-  },
-  onCancel: function() {
-    // ...
-  }
-})
+```html
+<!-- xxx.html -->
+<script src="https://unpkg.com/clipic/dist/clipic.min.js"></script>
+<script>
+  var clipic = new Clipic()
+  clipic.getImage({
+    width: 500,
+    height: 400,
+    // ratio: 4 / 3,
+    src: 'xxx',
+    type: 'jpeg',
+    quality: 0.8,
+    onDone: function(base64) {
+      // ...
+    },
+    onCancel: function() {
+      // ...
+    }
+  })
+</script>
 ```
 
 ## 参数说明

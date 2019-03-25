@@ -60,13 +60,18 @@ class Clipic {
     this.cancelBtn.innerHTML = this.options.buttonText[0]
     this.resetBtn.innerHTML = this.options.buttonText[1]
     this.confirmBtn.innerHTML = this.options.buttonText[2]
-    this.options.ratio = this.options.ratio || this.options.width / this.options.height
     this.img2.crossOrigin = 'Anonymous'
     this.img1.src = this.options.src
     this.img2.src = this.options.src
     this.img2.onload = () => {
       this.originW = this.img2.width
       this.originH = this.img2.height
+      if (this.options.ratio) {
+        this.options.width = this.img2.width
+        this.options.height = this.img2.width / this.options.ratio
+      } else {
+        this.options.ratio = this.options.width / this.options.height
+      }
       this.originRatio = this.originW / this.originH
       this.initSize()
       this.clipic.style.transform = 'translate(0, 0)'
@@ -201,16 +206,16 @@ class Clipic {
     const ctx = canvas.getContext('2d')
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    let w
-    let h
+    let drawImageW
+    let drawImageH
     if (this.options.ratio > this.originRatio) {
-      w = this.options.width
-      h = this.originH / (this.originW / this.options.width)
+      drawImageW = this.options.width
+      drawImageH = this.originH / (this.originW / this.options.width)
     } else {
-      h = this.options.height
-      w = this.originW / (this.originH / this.options.height)
+      drawImageH = this.options.height
+      drawImageW = this.originW / (this.originH / this.options.height)
     }
-    const point = { x: w / 2, y: h / 2 }
+    const point = { x: drawImageW / 2, y: drawImageH / 2 }
     ctx.translate(this.translateX * zommRatio, this.translateY * zommRatio)
     if (this.rotate !== 0) {
       ctx.translate(point.x, point.y)
@@ -221,7 +226,7 @@ class Clipic {
       ctx.translate(point.x * (1 - this.scale), point.y * (1 - this.scale))
       ctx.scale(this.scale, this.scale)
     }
-    ctx.drawImage(this.img2, 0, 0, w, h)
+    ctx.drawImage(this.img2, 0, 0, drawImageW, drawImageH)
     if (this.options.onDone) {
       this.options.onDone(canvas.toDataURL(`image/${this.options.type}`, this.options.quality))
     }

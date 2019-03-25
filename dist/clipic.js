@@ -219,6 +219,7 @@
       };
       return Clipic;
   }();
+  //# sourceMappingURL=main.js.map
 
   return Clipic;
 

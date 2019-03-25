@@ -57,9 +57,9 @@
         reader.readAsDataURL(files[0])
         reader.onload = e => {
           clipic.getImage({
-            width: 500,
-            height: 400,
-            // ratio: 4 / 3,
+            // width: 500,
+            // height: 400,
+            ratio: 16 / 9,
             src: e.target.result,
             // buttonText: ['Cancel', 'Reset', 'Done'],
             onDone: function(e) {

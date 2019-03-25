@@ -246,7 +246,7 @@ class Clipic {
     }
     if (this.scale !== 1) {
       ctx.translate(point.x * (1 - this.scale), point.y * (1 - this.scale))
-      ctx.scale(this.scale, this.scale)
+      ctx.scale(this.scale, this.scale) 
     }
     ctx.drawImage(this.img2, 0, 0, w, h)
     if (this.options.onDone) {

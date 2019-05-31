@@ -53,6 +53,9 @@
       this.cancelBtn = this.getId('clipicCancel'); // 取消按钮
       this.resetBtn = this.getId('clipicReset'); // 重置按钮
       this.confirmBtn = this.getId('clipicConfirm'); // 完成按钮
+      this.reset = this.reset.bind(this);
+      this.done = this.done.bind(this);
+      this.cancel = this.cancel.bind(this);
     }
 
     createClass(Clipic, [{
@@ -117,19 +120,10 @@
           _this.initSize();
           _this.clipic.style.transform = 'translate(0, 0)';
 
-          _this.cancelBtn.addEventListener('click', function () {
-            _this.cancel();
-          });
-
-          _this.resetBtn.addEventListener('click', function () {
-            _this.reset();
-          });
-
-          _this.confirmBtn.addEventListener('click', function () {
-            _this.done();
-          });
-
-          _this.Frame2.addEventListener('touchmove', function (e) {
+          _this.cancelBtn.addEventListener('click', _this.cancel);
+          _this.resetBtn.addEventListener('click', _this.reset);
+          _this.confirmBtn.addEventListener('click', _this.done);
+          _this.clipic.addEventListener('touchmove', function (e) {
             e.preventDefault();
             if (e.touches.length > 1) {
               _this.setScale(e.touches[0], e.touches[1]);
@@ -138,8 +132,7 @@
             }
             _this.setTranslate(e.touches[0]);
           });
-
-          _this.Frame2.addEventListener('touchend', function (e) {
+          _this.clipic.addEventListener('touchend', function (e) {
             _this.distance = null;
             _this.angle = null;
             _this.moveX = null;
@@ -228,6 +221,12 @@
           _this2.img2.style = '';
           _this2.img2.src = '';
         }, 400);
+        if (this.options.onCancel) {
+          this.options.onCancel();
+        }
+        this.cancelBtn.removeEventListener('click', this.cancel);
+        this.resetBtn.removeEventListener('click', this.reset);
+        this.confirmBtn.removeEventListener('click', this.done, true);
       }
     }, {
       key: 'reset',
@@ -279,9 +278,6 @@
         ctx.drawImage(this.img2, 0, 0, drawImageW, drawImageH);
         if (this.options.onDone) {
           this.options.onDone(canvas.toDataURL('image/' + this.options.type, this.options.quality));
-        }
-        if (this.options.onCancel) {
-          this.options.onCancel();
         }
         this.cancel();
       }

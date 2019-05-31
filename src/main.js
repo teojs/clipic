@@ -19,6 +19,9 @@ class Clipic {
     this.cancelBtn = this.getId('clipicCancel') // 取消按钮
     this.resetBtn = this.getId('clipicReset') // 重置按钮
     this.confirmBtn = this.getId('clipicConfirm') // 完成按钮
+    this.reset = this.reset.bind(this)
+    this.done = this.done.bind(this)
+    this.cancel = this.cancel.bind(this)
   }
 
   init() {
@@ -76,19 +79,10 @@ class Clipic {
       this.initSize()
       this.clipic.style.transform = 'translate(0, 0)'
 
-      this.cancelBtn.addEventListener('click', () => {
-        this.cancel()
-      })
-
-      this.resetBtn.addEventListener('click', () => {
-        this.reset()
-      })
-
-      this.confirmBtn.addEventListener('click', () => {
-        this.done()
-      })
-
-      this.Frame2.addEventListener('touchmove', e => {
+      this.cancelBtn.addEventListener('click', this.cancel)
+      this.resetBtn.addEventListener('click', this.reset)
+      this.confirmBtn.addEventListener('click', this.done)
+      this.clipic.addEventListener('touchmove', e => {
         e.preventDefault()
         if (e.touches.length > 1) {
           this.setScale(e.touches[0], e.touches[1])
@@ -97,8 +91,7 @@ class Clipic {
         }
         this.setTranslate(e.touches[0])
       })
-
-      this.Frame2.addEventListener('touchend', e => {
+      this.clipic.addEventListener('touchend', e => {
         this.distance = null
         this.angle = null
         this.moveX = null
@@ -182,6 +175,12 @@ class Clipic {
       this.img2.style = ''
       this.img2.src = ''
     }, 400)
+    if (this.options.onCancel) {
+      this.options.onCancel()
+    }
+    this.cancelBtn.removeEventListener('click', this.cancel)
+    this.resetBtn.removeEventListener('click', this.reset)
+    this.confirmBtn.removeEventListener('click', this.done, true)
   }
 
   reset() {
@@ -229,9 +228,6 @@ class Clipic {
     ctx.drawImage(this.img2, 0, 0, drawImageW, drawImageH)
     if (this.options.onDone) {
       this.options.onDone(canvas.toDataURL(`image/${this.options.type}`, this.options.quality))
-    }
-    if (this.options.onCancel) {
-      this.options.onCancel()
     }
     this.cancel()
   }

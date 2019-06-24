@@ -48,8 +48,8 @@
       this.clipic = this.getId('clipic');
       this.img1 = this.getId('clipicImg1'); // 背景图
       this.img2 = this.getId('clipicImg2'); // 前景图
-      this.Frame1 = this.getId('clipicFrame1'); // 背景操作框
-      this.Frame2 = this.getId('clipicFrame2'); // 前景操作框
+      this.frame1 = this.getId('clipicFrame1'); // 背景操作框
+      this.frame2 = this.getId('clipicFrame2'); // 前景操作框
       this.cancelBtn = this.getId('clipicCancel'); // 取消按钮
       this.resetBtn = this.getId('clipicReset'); // 重置按钮
       this.confirmBtn = this.getId('clipicConfirm'); // 完成按钮
@@ -100,7 +100,7 @@
         this.rotate = 0; // 旋转
         this.translateX = 0; // 水平偏移
         this.translateY = 0; // 垂直偏移
-        this.options = Object.assign(this.default || {}, options);
+        this.options = Object.assign(this.default, options);
         this.cancelBtn.innerHTML = this.options.buttonText[0];
         this.resetBtn.innerHTML = this.options.buttonText[1];
         this.confirmBtn.innerHTML = this.options.buttonText[2];
@@ -143,24 +143,25 @@
     }, {
       key: 'initSize',
       value: function initSize() {
-        var cw = document.body.clientWidth - 60;
-        var ch = document.body.clientHeight - 80;
-        this.Frame1.style.width = cw + 'px';
-        this.Frame1.style.height = cw / this.options.ratio + 'px';
-        this.Frame2.style.width = cw + 'px';
-        this.Frame2.style.height = cw / this.options.ratio + 'px';
+        var body = document.documentElement || document.body;
+        var cw = body.clientWidth - 60;
+        var ch = body.clientHeight - 80;
+        this.frame1.style.width = cw + 'px';
+        this.frame1.style.height = cw / this.options.ratio + 'px';
+        this.frame2.style.width = cw + 'px';
+        this.frame2.style.height = cw / this.options.ratio + 'px';
         if (cw / this.options.ratio > ch) {
-          this.Frame1.style.height = ch + 'px';
-          this.Frame1.style.width = ch * this.options.ratio + 'px';
-          this.Frame2.style.height = ch + 'px';
-          this.Frame2.style.width = ch * this.options.ratio + 'px';
+          this.frame1.style.height = ch + 'px';
+          this.frame1.style.width = ch * this.options.ratio + 'px';
+          this.frame2.style.height = ch + 'px';
+          this.frame2.style.width = ch * this.options.ratio + 'px';
         }
         if (this.options.ratio > this.originRatio) {
-          this.img1.style.width = this.Frame2.clientWidth + 'px';
-          this.img2.style.width = this.Frame2.clientWidth + 'px';
+          this.img1.style.width = this.frame2.clientWidth + 'px';
+          this.img2.style.width = this.frame2.clientWidth + 'px';
         } else {
-          this.img1.style.height = this.Frame2.clientHeight + 'px';
-          this.img2.style.height = this.Frame2.clientHeight + 'px';
+          this.img1.style.height = this.frame2.clientHeight + 'px';
+          this.img2.style.height = this.frame2.clientHeight + 'px';
         }
       }
     }, {
@@ -248,7 +249,7 @@
     }, {
       key: 'done',
       value: function done() {
-        var zommRatio = this.options.width / this.Frame2.clientWidth;
+        var zommRatio = this.options.width / this.frame2.clientWidth;
         var canvas = document.createElement('canvas');
         canvas.width = this.options.width;
         canvas.height = this.options.height;

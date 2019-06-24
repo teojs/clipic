@@ -4,7 +4,7 @@ class Clipic {
   constructor() {
     this.default = {
       width: 500, // 裁剪宽度
-      height: 500, //裁剪高度
+      height: 500, // 裁剪高度
       src: '', // 需要裁剪的图片
       type: 'jpeg', // 裁剪后图片的类型，仅支持jpeg/png两种
       quality: 0.9, // 压缩质量
@@ -63,10 +63,10 @@ class Clipic {
     this.cancelBtn.innerHTML = this.options.buttonText[0]
     this.resetBtn.innerHTML = this.options.buttonText[1]
     this.confirmBtn.innerHTML = this.options.buttonText[2]
-    this.img2.crossOrigin = 'Anonymous'
     this.img1.src = this.options.src
     this.img2.src = this.options.src
-    this.img2.onload = () => {
+    let tempImage = new Image()
+    tempImage.onload = () => {
       this.originW = this.img2.width
       this.originH = this.img2.height
       if (this.options.ratio) {
@@ -78,7 +78,16 @@ class Clipic {
       this.originRatio = this.originW / this.originH
       this.initSize()
       this.clipic.style.transform = 'translate(0, 0)'
-
+      setTimeout(() => {
+        if (this.options.ratio > this.originRatio) {
+          this.img1.style.width = this.frame2.clientWidth + 'px'
+          this.img2.style.width = this.frame2.clientWidth + 'px'
+        } else {
+          this.img1.style.height = this.frame2.clientHeight + 'px'
+          this.img2.style.height = this.frame2.clientHeight + 'px'
+        }
+      }, 300)
+      this.setTransform()
       this.cancelBtn.addEventListener('click', this.cancel)
       this.resetBtn.addEventListener('click', this.reset)
       this.confirmBtn.addEventListener('click', this.done)
@@ -98,6 +107,7 @@ class Clipic {
         this.moveY = null
       })
     }
+    tempImage.src = this.options.src
   }
 
   initSize() {
@@ -113,13 +123,6 @@ class Clipic {
       this.frame1.style.width = ch * this.options.ratio + 'px'
       this.frame2.style.height = ch + 'px'
       this.frame2.style.width = ch * this.options.ratio + 'px'
-    }
-    if (this.options.ratio > this.originRatio) {
-      this.img1.style.width = this.frame2.clientWidth + 'px'
-      this.img2.style.width = this.frame2.clientWidth + 'px'
-    } else {
-      this.img1.style.height = this.frame2.clientHeight + 'px'
-      this.img2.style.height = this.frame2.clientHeight + 'px'
     }
   }
 

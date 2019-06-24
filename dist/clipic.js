@@ -38,7 +38,7 @@
 
       this.default = {
         width: 500, // 裁剪宽度
-        height: 500, //裁剪高度
+        height: 500, // 裁剪高度
         src: '', // 需要裁剪的图片
         type: 'jpeg', // 裁剪后图片的类型，仅支持jpeg/png两种
         quality: 0.9, // 压缩质量
@@ -104,10 +104,10 @@
         this.cancelBtn.innerHTML = this.options.buttonText[0];
         this.resetBtn.innerHTML = this.options.buttonText[1];
         this.confirmBtn.innerHTML = this.options.buttonText[2];
-        this.img2.crossOrigin = 'Anonymous';
         this.img1.src = this.options.src;
         this.img2.src = this.options.src;
-        this.img2.onload = function () {
+        var tempImage = new Image();
+        tempImage.onload = function () {
           _this.originW = _this.img2.width;
           _this.originH = _this.img2.height;
           if (_this.options.ratio) {
@@ -119,7 +119,16 @@
           _this.originRatio = _this.originW / _this.originH;
           _this.initSize();
           _this.clipic.style.transform = 'translate(0, 0)';
-
+          setTimeout(function () {
+            if (_this.options.ratio > _this.originRatio) {
+              _this.img1.style.width = _this.frame2.clientWidth + 'px';
+              _this.img2.style.width = _this.frame2.clientWidth + 'px';
+            } else {
+              _this.img1.style.height = _this.frame2.clientHeight + 'px';
+              _this.img2.style.height = _this.frame2.clientHeight + 'px';
+            }
+          }, 300);
+          _this.setTransform();
           _this.cancelBtn.addEventListener('click', _this.cancel);
           _this.resetBtn.addEventListener('click', _this.reset);
           _this.confirmBtn.addEventListener('click', _this.done);
@@ -139,6 +148,7 @@
             _this.moveY = null;
           });
         };
+        tempImage.src = this.options.src;
       }
     }, {
       key: 'initSize',
@@ -155,13 +165,6 @@
           this.frame1.style.width = ch * this.options.ratio + 'px';
           this.frame2.style.height = ch + 'px';
           this.frame2.style.width = ch * this.options.ratio + 'px';
-        }
-        if (this.options.ratio > this.originRatio) {
-          this.img1.style.width = this.frame2.clientWidth + 'px';
-          this.img2.style.width = this.frame2.clientWidth + 'px';
-        } else {
-          this.img1.style.height = this.frame2.clientHeight + 'px';
-          this.img2.style.height = this.frame2.clientHeight + 'px';
         }
       }
     }, {

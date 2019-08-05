@@ -1,6 +1,6 @@
 {
   "name": "clipic",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "移动端图片裁剪工具",
   "main": "./dist/clipic.js",
   "directories": {
@@ -34,6 +34,7 @@
     "babel-preset-es2015-rollup": "^3.0.0",
     "babel-preset-latest": "^6.24.1",
     "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-uglify": "^6.0.2",
     "rollup-watch": "^4.3.1"
   }

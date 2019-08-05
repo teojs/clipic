@@ -4,7 +4,35 @@
   (global = global || self, global.Clipic = factory());
 }(this, function () { 'use strict';
 
-  var css = "\n.clipic-body {\n  background: #1c1c1c;\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  -webkit-transform: translate(0, 100%);\n      -ms-transform: translate(0, 100%);\n          transform: translate(0, 100%);\n  -webkit-transition: 0.4s;\n  -o-transition: 0.4s;\n  transition: 0.4s;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n  z-index: 99;\n  overflow: hidden;\n}\n.clipic-body * {\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n.clipic-operation-bar {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  color: #f2f2f2;\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n  position: absolute;\n  width: 100%;\n  bottom: 0;\n  left: 0;\n}\n.clipic-operation-bar [role=\"button\"] {\n  padding: 15px 20px;\n  font-size: 1em;\n}\n.clipic-frame {\n  background: #f2f2f2;\n  position: absolute;\n  left: 50%;\n  top: 30px;\n  transform: translateX(-50%);\n  transition: 0.3s;\n}\n.clipic-frame img {\n  -webkit-touch-callout: none;\n  pointer-events: none;\n}\n.clipic-frame-show {\n  overflow: hidden;\n}\n.clipic-cancel {\n  color: #e04c4c;\n}\n.clipic-reset{\n  color: #3680fd;\n}\n.clipic-confirm{\n  color: #23c667;\n}\n.clipic-layer {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  background: rgba(0,0,0,0.8);\n  pointer-events: none;\n  transform: translate3D(0,0,0);\n}\n";
+  function styleInject(css, ref) {
+    if ( ref === void 0 ) ref = {};
+    var insertAt = ref.insertAt;
+
+    if (!css || typeof document === 'undefined') { return; }
+
+    var head = document.head || document.getElementsByTagName('head')[0];
+    var style = document.createElement('style');
+    style.type = 'text/css';
+
+    if (insertAt === 'top') {
+      if (head.firstChild) {
+        head.insertBefore(style, head.firstChild);
+      } else {
+        head.appendChild(style);
+      }
+    } else {
+      head.appendChild(style);
+    }
+
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+  }
+
+  var css = ".clipic-body{background:#1c1c1c;position:fixed;width:100%;height:100%;top:0;left:0;-webkit-transform:translateY(100%);-ms-transform:translateY(100%);transform:translateY(100%);-webkit-transition:.4s;-o-transition:.4s;transition:.4s;-webkit-touch-callout:none;-webkit-user-select:none;z-index:99;overflow:hidden}.clipic-body,.clipic-body *{-webkit-box-sizing:border-box;box-sizing:border-box}.clipic-operation-bar{display:-webkit-box;display:-ms-flexbox;display:flex;color:#f2f2f2;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;position:absolute;width:100%;bottom:0;left:0}.clipic-operation-bar [role=button]{padding:15px 20px;font-size:1em}.clipic-frame{background:#f2f2f2;position:absolute;left:50%;top:30px;transform:translateX(-50%);transition:.3s}.clipic-frame img{-webkit-touch-callout:none;pointer-events:none}.clipic-frame-show{overflow:hidden}.clipic-cancel{color:#e04c4c}.clipic-reset{color:#3680fd}.clipic-confirm{color:#23c667}.clipic-layer{position:fixed;width:100%;height:100%;top:0;left:0;background:rgba(0,0,0,.8);pointer-events:none;transform:translateZ(0)}";
+  styleInject(css);
 
   var dom = "\n    <div class=\"clipic-frame\" id=\"clipicFrame1\"><img id=\"clipicImg1\"></div>\n    <div class=\"clipic-layer\"></div>\n    <div class=\"clipic-frame clipic-frame-show\" id=\"clipicFrame2\"><img id=\"clipicImg2\"></div>\n    <div class=\"clipic-operation-bar\">\n      <div class=\"clipic-cancel\" id=\"clipicCancel\" role=\"button\">\u53D6\u6D88</div>\n      <div class=\"clipic-reset\" id=\"clipicReset\" role=\"button\">\u91CD\u7F6E</div>\n      <div class=\"clipic-confirm\" id=\"clipicConfirm\" role=\"button\">\u5B8C\u6210</div>\n    </div>\n  ";
 
@@ -62,7 +90,6 @@
       key: 'init',
       value: function init() {
         if (!this.getId('clipic')) {
-          this.createStyle();
           this.createHtml();
         }
       }
@@ -70,14 +97,6 @@
       key: 'getId',
       value: function getId(id) {
         return document.getElementById(id);
-      }
-    }, {
-      key: 'createStyle',
-      value: function createStyle() {
-        var style = document.createElement('style');
-        style.type = 'text/css';
-        style.innerHTML = css;
-        document.getElementsByTagName('HEAD').item(0).appendChild(style);
       }
     }, {
       key: 'createHtml',

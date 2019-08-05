@@ -1,4 +1,4 @@
-import css from './css'
+import './style.css'
 import dom from './dom'
 
 class Clipic {
@@ -27,23 +27,12 @@ class Clipic {
 
   init() {
     if (!this.getId('clipic')) {
-      this.createStyle()
       this.createHtml()
     }
   }
 
   getId(id) {
     return document.getElementById(id)
-  }
-
-  createStyle() {
-    const style = document.createElement('style')
-    style.type = 'text/css'
-    style.innerHTML = css
-    document
-      .getElementsByTagName('HEAD')
-      .item(0)
-      .appendChild(style)
   }
 
   createHtml() {

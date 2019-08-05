@@ -1,4 +1,3 @@
-const css = `
 .clipic-body {
   background: #1c1c1c;
   position: fixed;
@@ -7,21 +6,21 @@ const css = `
   top: 0;
   left: 0;
   -webkit-transform: translate(0, 100%);
-      -ms-transform: translate(0, 100%);
-          transform: translate(0, 100%);
+  -ms-transform: translate(0, 100%);
+  transform: translate(0, 100%);
   -webkit-transition: 0.4s;
   -o-transition: 0.4s;
   transition: 0.4s;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   z-index: 99;
   overflow: hidden;
 }
 .clipic-body * {
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
 }
 .clipic-operation-bar {
   display: -webkit-box;
@@ -29,14 +28,14 @@ const css = `
   display: flex;
   color: #f2f2f2;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   position: absolute;
   width: 100%;
   bottom: 0;
   left: 0;
 }
-.clipic-operation-bar [role="button"] {
+.clipic-operation-bar [role='button'] {
   padding: 15px 20px;
   font-size: 1em;
 }
@@ -58,10 +57,10 @@ const css = `
 .clipic-cancel {
   color: #e04c4c;
 }
-.clipic-reset{
+.clipic-reset {
   color: #3680fd;
 }
-.clipic-confirm{
+.clipic-confirm {
   color: #23c667;
 }
 .clipic-layer {
@@ -70,9 +69,7 @@ const css = `
   height: 100%;
   top: 0;
   left: 0;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   pointer-events: none;
-  transform: translate3D(0,0,0);
+  transform: translate3D(0, 0, 0);
 }
-`
-export default css

@@ -100,7 +100,8 @@
         this.rotate = 0; // 旋转
         this.translateX = 0; // 水平偏移
         this.translateY = 0; // 垂直偏移
-        this.options = Object.assign(this.default, options);
+        var defaults = JSON.parse(JSON.stringify(this.default));
+        this.options = Object.assign(defaults, options);
         this.cancelBtn.innerHTML = this.options.buttonText[0];
         this.resetBtn.innerHTML = this.options.buttonText[1];
         this.confirmBtn.innerHTML = this.options.buttonText[2];

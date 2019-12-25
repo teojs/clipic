@@ -68,7 +68,9 @@
         width: 500, // 裁剪宽度
         height: 500, // 裁剪高度
         src: '', // 需要裁剪的图片
+        encode: 'base64', // 导出格式，支持 base64|blob|file
         type: 'jpeg', // 裁剪后图片的类型，仅支持jpeg/png两种
+        name: 'clipic', // 如果导出格式位file, 则可以填写图片名
         quality: 0.9, // 压缩质量
         buttonText: ['取消', '重置', '完成'] // 底部三个按钮文案
       };
@@ -235,7 +237,7 @@
       }
     }, {
       key: 'cancel',
-      value: function cancel() {
+      value: function cancel(eventType) {
         var _this2 = this;
 
         this.clipic.style.transform = 'translate(0, 100%)';
@@ -245,7 +247,7 @@
           _this2.img2.style = '';
           _this2.img2.src = '';
         }, 400);
-        if (this.options.onCancel) {
+        if (this.options.onCancel && eventType !== 'done') {
           this.options.onCancel();
         }
         this.cancelBtn.removeEventListener('click', this.cancel);
@@ -272,6 +274,8 @@
     }, {
       key: 'done',
       value: function done() {
+        var _this4 = this;
+
         var zommRatio = this.options.width / this.frame2.clientWidth;
         var canvas = document.createElement('canvas');
         canvas.width = this.options.width;
@@ -301,9 +305,27 @@
         }
         ctx.drawImage(this.img2, 0, 0, drawImageW, drawImageH);
         if (this.options.onDone) {
-          this.options.onDone(canvas.toDataURL('image/' + this.options.type, this.options.quality));
+          switch (this.options.encode) {
+            case 'base64':
+              this.options.onDone(canvas.toDataURL('image/' + this.options.type, this.options.quality));
+              break;
+            case 'blob':
+              canvas.toBlob(function (blob) {
+                _this4.options.onDone(blob);
+              }, 'image/' + this.options.type);
+              break;
+            case 'file':
+              canvas.toBlob(function (blob) {
+                var file = new window.File([blob], _this4.options.name, { type: 'image/' + _this4.options.type });
+                _this4.options.onDone(file);
+              }, 'image/' + this.options.type);
+              break;
+            default:
+              this.options.onDone(canvas.toDataURL('image/' + this.options.type, this.options.quality));
+              break;
+          }
         }
-        this.cancel();
+        this.cancel('done');
       }
     }]);
     return Clipic;

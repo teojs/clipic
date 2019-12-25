@@ -1,74 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-    />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Clipic.js</title>
-    <style>
-      body,
-      html {
-        width: 100%;
-        height: 100%;
-        background: #f2f2f2;
-        padding: 0;
-        margin: 0;
-        font-size: 1em;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Clipic.js</title>
+  <style>
+    body,
+    html {
+      width: 100%;
+      height: 100%;
+      background: #f2f2f2;
+      padding: 0;
+      margin: 0;
+      font-size: 1em;
+    }
+
+    .button {
+      width: 80%;
+      background: green;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+      margin: 20px auto;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .upload-img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+    }
+
+    #previewImg {
+      max-width: 100%;
+    }
+
+  </style>
+</head>
+
+<body>
+  <section>
+    <img id="previewImg" src="https://avatars1.githubusercontent.com/u/25993112?s=460&v=4" alt="预览" />
+    <div class="button" role="button">
+      选择图片 <input type="file" name="file" class="upload-img" accept="image/*" onchange="chooseImg(this)" />
+    </div>
+  </section>
+  <script src="./dist/clipic.js"></script>
+  <script>
+    var clipic = new Clipic()
+    function chooseImg(event) {
+      var files = event.files || event.dataTransfer.files
+      var reader = new FileReader()
+      reader.readAsDataURL(files[0])
+      reader.onload = e => {
+        clipic.getImage({
+          // width: 500,
+          // height: 400,
+          ratio: 16 / 9,
+          src: e.target.result,
+          // buttonText: ['Cancel', 'Reset', 'Done'],
+          name: 'test',
+          encode: 'base64', // 支持 base64、blob、file
+          type: 'png',
+          // quality: '0.9', // 导出图片的质量
+          onDone: function (e) {
+            document.getElementById('previewImg').src = e
+          },
+          onCancel: function () {
+            console.log('取消裁剪')
+          }
+        })
       }
-      .button {
-        width: 80%;
-        background: green;
-        color: #fff;
-        padding: 10px;
-        text-align: center;
-        margin: 20px auto;
-        border-radius: 4px;
-        position: relative;
-      }
-      .upload-img {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        opacity: 0;
-      }
-      #previewImg {
-        max-width: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <section>
-      <img id="previewImg" src="https://avatars1.githubusercontent.com/u/25993112?s=460&v=4" alt="预览" />
-      <div class="button" role="button">
-        选择图片 <input type="file" name="file" class="upload-img" accept="image/*" onchange="chooseImg(this)" />
-      </div>
-    </section>
-    <script src="./dist/clipic.js"></script>
-    <script>
-      var clipic = new Clipic()
-      function chooseImg(event) {
-        var files = event.files || event.dataTransfer.files
-        var reader = new FileReader()
-        reader.readAsDataURL(files[0])
-        reader.onload = e => {
-          clipic.getImage({
-            // width: 500,
-            // height: 400,
-            ratio: 16 / 9,
-            src: e.target.result,
-            // buttonText: ['Cancel', 'Reset', 'Done'],
-            onDone: function(e) {
-              document.getElementById('previewImg').src = e
-            }
-          })
-        }
-        event.value = ''
-      }
-    </script>
-  </body>
+      event.value = ''
+    }
+  </script>
+</body>
+
 </html>

@@ -7,7 +7,9 @@ class Clipic {
       width: 500, // 裁剪宽度
       height: 500, // 裁剪高度
       src: '', // 需要裁剪的图片
+      encode: 'base64', // 导出格式，支持 base64|blob|file
       type: 'jpeg', // 裁剪后图片的类型，仅支持jpeg/png两种
+      name: 'clipic', // 如果导出格式位file, 则可以填写图片名
       quality: 0.9, // 压缩质量
       buttonText: ['取消', '重置', '完成'] // 底部三个按钮文案
     }
@@ -155,14 +157,12 @@ class Clipic {
   }
 
   setTransform() {
-    const transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale}) rotate(${
-      this.rotate
-    }deg)`
+    const transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale}) rotate(${this.rotate}deg)`
     this.img1.style.transform = transform
     this.img2.style.transform = transform
   }
 
-  cancel() {
+  cancel(eventType) {
     this.clipic.style.transform = 'translate(0, 100%)'
     setTimeout(() => {
       this.img1.style = ''
@@ -170,7 +170,7 @@ class Clipic {
       this.img2.style = ''
       this.img2.src = ''
     }, 400)
-    if (this.options.onCancel) {
+    if (this.options.onCancel && eventType !== 'done') {
       this.options.onCancel()
     }
     this.cancelBtn.removeEventListener('click', this.cancel)
@@ -222,9 +222,27 @@ class Clipic {
     }
     ctx.drawImage(this.img2, 0, 0, drawImageW, drawImageH)
     if (this.options.onDone) {
-      this.options.onDone(canvas.toDataURL(`image/${this.options.type}`, this.options.quality))
+      switch (this.options.encode) {
+        case 'base64':
+          this.options.onDone(canvas.toDataURL(`image/${this.options.type}`, this.options.quality))
+          break
+        case 'blob':
+          canvas.toBlob(blob => {
+            this.options.onDone(blob)
+          }, `image/${this.options.type}`)
+          break
+        case 'file':
+          canvas.toBlob(blob => {
+            let file = new window.File([blob], this.options.name, { type: `image/${this.options.type}` })
+            this.options.onDone(file)
+          }, `image/${this.options.type}`)
+          break
+        default:
+          this.options.onDone(canvas.toDataURL(`image/${this.options.type}`, this.options.quality))
+          break
+      }
     }
-    this.cancel()
+    this.cancel('done')
   }
 }
 export default Clipic

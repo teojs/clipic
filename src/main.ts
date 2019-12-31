@@ -78,13 +78,19 @@ class Clipic {
     tempImage.onload = () => {
       this.originW = this.img.width
       this.originH = this.img.height
+
+      this.originRatio = this.originW / this.originH
       if (this.options.ratio) {
-        this.options.width = this.img.width
-        this.options.height = this.img.width / this.options.ratio
+        if (this.originRatio < this.options.ratio) {
+          this.options.width = this.img.width
+          this.options.height = this.img.width / this.options.ratio
+        } else {
+          this.options.height = this.img.height
+          this.options.width = this.img.height * this.options.ratio
+        }
       } else {
         this.options.ratio = this.options.width / this.options.height
       }
-      this.originRatio = this.originW / this.originH
       this.initSize()
       this.clipic.style.transform = 'translate(0, 0)'
       setTimeout(() => {

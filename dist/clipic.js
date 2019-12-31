@@ -86,13 +86,18 @@
           tempImage.onload = function () {
               _this.originW = _this.img.width;
               _this.originH = _this.img.height;
+              _this.originRatio = _this.originW / _this.originH;
               if (_this.options.ratio) {
-                  _this.options.width = _this.img.width;
-                  _this.options.height = _this.img.width / _this.options.ratio;
+                  if (_this.originRatio < _this.options.ratio) {
+                      _this.options.width = _this.img.width;
+                      _this.options.height = _this.img.width / _this.options.ratio;
+                  } else {
+                      _this.options.height = _this.img.height;
+                      _this.options.width = _this.img.height * _this.options.ratio;
+                  }
               } else {
                   _this.options.ratio = _this.options.width / _this.options.height;
               }
-              _this.originRatio = _this.originW / _this.originH;
               _this.initSize();
               _this.clipic.style.transform = 'translate(0, 0)';
               setTimeout(function () {

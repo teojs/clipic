@@ -1,27 +1,28 @@
-import css from './css'
+import './css.css'
 import dom from './dom'
 class Clipic {
-  default: object = {
-    width:      500,                    // 裁剪宽度
-    height:     500,                    // 裁剪高度
-    src:        '',                     // 需要裁剪的图片
-    type:       'jpeg',                 // 裁剪后图片的类型，仅支持jpeg/png两种
-    quality:    0.9,                    // 压缩质量
+  defaults: object = {
+    width: 500,                         // 裁剪宽度
+    height: 500,                        // 裁剪高度
+    src: '',                            // 需要裁剪的图片
+    encode: 'base64',                   // 导出格式，支持 base64|blob|file
+    type: 'jpeg',                       // 裁剪后图片的类型，仅支持jpeg/png两种
+    name: 'clipic',                     // 如果导出格式位file, 则可以填写图片名
+    quality: 0.9,                       // 压缩质量
     buttonText: ['取消', '重置', '完成'] // 底部三个按钮文案
   }
   options: {
-    [x: string]: any
+    [propName: string]: any
   }
 
-  clipic:     HTMLElement
-  img1:       HTMLElement
-  img2:       HTMLElement
-  frame1:     HTMLElement
-  frame2:     HTMLElement
-  cancelBtn:  HTMLElement
-  resetBtn:   HTMLElement
-  confirmBtn: HTMLElement
+  clipic:     HTMLElement      = this.getId('clipic')
+  img:        HTMLImageElement = this.getId('clipicImg')      // 裁剪预览图
+  frame:      HTMLElement      = this.getId('clipicFrame')    // 背景操作框
+  cancelBtn:  HTMLElement      = this.getId('clipicCancel')   // 取消按钮
+  resetBtn:   HTMLElement      = this.getId('clipicReset')    // 重置按钮
+  confirmBtn: HTMLElement      = this.getId('clipicConfirm')  // 完成按钮
 
+  // 主要参数
   scale:       number // 缩放
   rotate:      number // 旋转
   translateX:  number // 水平偏移
@@ -37,36 +38,19 @@ class Clipic {
   moveY:    number
 
   constructor() {
-    this.init()                                    // 初始化，渲染dom跟css
-    this.clipic      = this.getId('clipic')
-    this.img1        = this.getId('clipicImg1')    // 背景图
-    this.img2        = this.getId('clipicImg2')    // 前景图
-    this.frame1      = this.getId('clipicFrame1')  // 背景操作框
-    this.frame2      = this.getId('clipicFrame2')  // 前景操作框
-    this.cancelBtn   = this.getId('clipicCancel')  // 取消按钮
-    this.resetBtn    = this.getId('clipicReset')   // 重置按钮
-    this.confirmBtn  = this.getId('clipicConfirm') // 完成按钮
-  }
-
-  private init(): void {
     if (!this.getId('clipic')) {
-      this.createStyle()
       this.createHtml()
     }
+    this.clipic     = this.getId('clipic')
+    this.img        = this.getId('clipicImg')      // 裁剪预览图
+    this.frame      = this.getId('clipicFrame')    // 背景操作框
+    this.cancelBtn  = this.getId('clipicCancel')   // 取消按钮
+    this.resetBtn   = this.getId('clipicReset')    // 重置按钮
+    this.confirmBtn = this.getId('clipicConfirm')  // 完成按钮
   }
 
   private getId(id: string): any {
     return document.getElementById(id)
-  }
-
-  private createStyle(): void {
-    const style = document.createElement('style')
-    style.type = 'text/css'
-    style.innerHTML = css
-    document
-      .getElementsByTagName('HEAD')
-      .item(0)
-      .appendChild(style)
   }
 
   private createHtml(): void {
@@ -79,38 +63,41 @@ class Clipic {
 
   public getImage(options: object): void {
     // 初始化参数
-    this.scale = 1
-    this.rotate = 0
-    this.translateX = 0
-    this.translateY = 0
-    this.options = Object.assign(this.default, options)
+    this.scale = 1 // 缩放
+    this.rotate = 0 // 旋转
+    this.translateX = 0 // 水平偏移
+    this.translateY = 0 // 垂直偏移
+    const defaults = JSON.parse(JSON.stringify(this.defaults))
+    this.options = Object.assign(defaults, options)
     this.cancelBtn.innerHTML = this.options.buttonText[0]
     this.resetBtn.innerHTML = this.options.buttonText[1]
     this.confirmBtn.innerHTML = this.options.buttonText[2]
-    this.options.ratio = this.options.ratio || this.options.width / this.options.height
-    this.img2.setAttribute('crossOrigin', 'Anonymous')
-    this.img1.setAttribute('src', this.options.src)
-    this.img2.setAttribute('src', this.options.src)
-    this.img2.onload = () => {
-      this.originW = this.img2['width']
-      this.originH = this.img2['height']
+    this.img.src = this.options.src
+    let tempImage = new Image()
+    tempImage.onload = () => {
+      this.originW = this.img.width
+      this.originH = this.img.height
+      if (this.options.ratio) {
+        this.options.width = this.img.width
+        this.options.height = this.img.width / this.options.ratio
+      } else {
+        this.options.ratio = this.options.width / this.options.height
+      }
       this.originRatio = this.originW / this.originH
       this.initSize()
       this.clipic.style.transform = 'translate(0, 0)'
-
-      this.cancelBtn.addEventListener('click', () => {
-        this.cancel()
-      })
-
-      this.resetBtn.addEventListener('click', () => {
-        this.reset()
-      })
-
-      this.confirmBtn.addEventListener('click', () => {
-        this.done()
-      })
-
-      this.frame2.addEventListener('touchmove', e => {
+      setTimeout(() => {
+        if (this.options.ratio > this.originRatio) {
+          this.img.style.width = this.frame.clientWidth + 'px'
+        } else {
+          this.img.style.height = this.frame.clientHeight + 'px'
+        }
+      }, 300)
+      this.setTransform()
+      this.cancelBtn.addEventListener('click', this.cancel.bind(this))
+      this.resetBtn.addEventListener('click', this.reset.bind(this))
+      this.confirmBtn.addEventListener('click', this.done.bind(this))
+      this.clipic.addEventListener('touchmove', e => {
         e.preventDefault()
         if (e.touches.length > 1) {
           this.setScale(e.touches[0], e.touches[1])
@@ -119,35 +106,29 @@ class Clipic {
         }
         this.setTranslate(e.touches[0])
       })
-
-      this.frame2.addEventListener('touchend', e => {
+      this.clipic.addEventListener('touchend', e => {
         this.distance = null
         this.angle = null
         this.moveX = null
         this.moveY = null
       })
     }
+    tempImage.src = this.options.src
   }
 
   private initSize(): void {
     const cw = document.body.clientWidth - 60
     const ch = document.body.clientHeight - 80
-    this.frame1.style.width = cw + 'px'
-    this.frame1.style.height = cw / this.options.ratio + 'px'
-    this.frame2.style.width = cw + 'px'
-    this.frame2.style.height = cw / this.options.ratio + 'px'
+    this.frame.style.width = cw + 'px'
+    this.frame.style.height = cw / this.options.ratio + 'px'
     if (cw / this.options.ratio > ch) {
-      this.frame1.style.height = ch + 'px'
-      this.frame1.style.width = ch * this.options.ratio + 'px'
-      this.frame2.style.height = ch + 'px'
-      this.frame2.style.width = ch * this.options.ratio + 'px'
+      this.frame.style.height = ch + 'px'
+      this.frame.style.width = ch * this.options.ratio + 'px'
     }
     if (this.options.ratio > this.originRatio) {
-      this.img1.style.width = this.frame2.clientWidth + 'px'
-      this.img2.style.width = this.frame2.clientWidth + 'px'
+      this.img.style.width = this.frame.clientWidth + 'px'
     } else {
-      this.img1.style.height = this.frame2.clientHeight + 'px'
-      this.img2.style.height = this.frame2.clientHeight + 'px'
+      this.img.style.height = this.frame.clientHeight + 'px'
     }
   }
 
@@ -156,7 +137,7 @@ class Clipic {
     const y = Math.abs(touches1.clientY - touches2.clientY)
     const s = Math.sqrt(x * x + y * y)
     if (this.distance) {
-      this.scale += (s - this.distance) / this.img2.clientWidth
+      this.scale += (s - this.distance) / this.img.clientWidth
       this.setTransform()
     }
     this.distance = s
@@ -192,18 +173,21 @@ class Clipic {
     const transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale}) rotate(${
       this.rotate
     }deg)`
-    this.img1.style.transform = transform
-    this.img2.style.transform = transform
+    this.img.style.transform = transform
   }
 
-  cancel(): void {
+  cancel(eventType?: any): void {
     this.clipic.style.transform = 'translate(0, 100%)'
     setTimeout(() => {
-      this.img1.setAttribute('style', '')
-      this.img1.setAttribute('src', '')
-      this.img2.setAttribute('style', '')
-      this.img2.setAttribute('src', '')
+      this.img.setAttribute('style', null)
+      this.img.src = ''
     }, 400)
+    if (this.options.onCancel && eventType !== 'done') {
+      this.options.onCancel()
+    }
+    this.cancelBtn.removeEventListener('click', this.cancel.bind(this))
+    this.resetBtn.removeEventListener('click', this.reset.bind(this))
+    this.confirmBtn.removeEventListener('click', this.done.bind(this), true)
   }
 
   reset(): void {
@@ -211,33 +195,31 @@ class Clipic {
     this.rotate = 0
     this.translateX = 0
     this.translateY = 0
-    this.img1.style.transition = '0.3s'
-    this.img2.style.transition = '0.3s'
+    this.img.style.transition = '0.3s'
     this.setTransform()
     setTimeout(() => {
-      this.img1.style.transition = ''
-      this.img2.style.transition = ''
+      this.img.style.transition = ''
     }, 300)
   }
 
   done(): void {
-    const zommRatio = this.options.width / this.frame2.clientWidth
+    const zommRatio = this.options.width / this.frame.clientWidth
     const canvas = document.createElement('canvas')
     canvas.width = this.options.width
     canvas.height = this.options.height
     const ctx = canvas.getContext('2d')
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    let w: number
-    let h: number
+    let drawImageW : number
+    let drawImageH : number
     if (this.options.ratio > this.originRatio) {
-      w = this.options.width
-      h = this.originH / (this.originW / this.options.width)
+      drawImageW = this.options.width
+      drawImageH = this.originH / (this.originW / this.options.width)
     } else {
-      h = this.options.height
-      w = this.originW / (this.originH / this.options.height)
+      drawImageH = this.options.height
+      drawImageW = this.originW / (this.originH / this.options.height)
     }
-    const point = { x: w / 2, y: h / 2 }
+    const point = { x: drawImageW / 2, y: drawImageH / 2 }
     ctx.translate(this.translateX * zommRatio, this.translateY * zommRatio)
     if (this.rotate !== 0) {
       ctx.translate(point.x, point.y)
@@ -246,16 +228,31 @@ class Clipic {
     }
     if (this.scale !== 1) {
       ctx.translate(point.x * (1 - this.scale), point.y * (1 - this.scale))
-      ctx.scale(this.scale, this.scale) 
+      ctx.scale(this.scale, this.scale)
     }
-    ctx.drawImage(this.img2, 0, 0, w, h)
+    ctx.drawImage(this.img, 0, 0, drawImageW, drawImageH)
     if (this.options.onDone) {
-      this.options.onDone(canvas.toDataURL(`image/${this.options.type}`, this.options.quality))
+      switch (this.options.encode) {
+        case 'base64':
+          this.options.onDone(canvas.toDataURL(`image/${this.options.type}`, this.options.quality))
+          break
+        case 'blob':
+          canvas.toBlob(blob => {
+            this.options.onDone(blob)
+          }, `image/${this.options.type}`)
+          break
+        case 'file':
+          canvas.toBlob(blob => {
+            let file = new window.File([blob], this.options.name, { type: `image/${this.options.type}` })
+            this.options.onDone(file)
+          }, `image/${this.options.type}`)
+          break
+        default:
+          this.options.onDone(canvas.toDataURL(`image/${this.options.type}`, this.options.quality))
+          break
+      }
     }
-    if (this.options.onCancel) {
-      this.options.onCancel()
-    }
-    this.cancel()
+    this.cancel('done')
   }
 }
 export default Clipic

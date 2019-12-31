@@ -1,0 +1,88 @@
+.clipic-body {
+  background: #1c1c1c;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  -webkit-transform: translate(0, 100%);
+  -ms-transform: translate(0, 100%);
+  transform: translate(0, 100%);
+  -webkit-transition: 0.4s;
+  -o-transition: 0.4s;
+  transition: 0.4s;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  z-index: 9999;
+  overflow: hidden;
+}
+.clipic-body * {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.clipic-layer {
+  background: rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  transform: translate3D(0, 0, 0);
+}
+.clipic-layer__top {
+  height: 30px;
+  position: relative;
+  z-index: 10;
+}
+.clipic-layer__center {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+}
+.clipic-frame {
+  background: #f2f2f2;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+.clipic-layer__left,
+.clipic-layer__right {
+  min-width: 30px;
+  flex-shrink: 1;
+  position: relative;
+  z-index: 10;
+}
+.clipic-layer__bottom {
+  height: 100%;
+  position: relative;
+  z-index: 10;
+}
+.clipic-operation-bar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  color: #f2f2f2;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  z-index: 11;
+}
+.clipic-operation-bar [role='button'] {
+  padding: 15px 20px;
+  font-size: 1em;
+}
+.clipic-frame img {
+  -webkit-touch-callout: none;
+  pointer-events: none;
+}
+.clipic-cancel {
+  color: #e04c4c;
+}
+.clipic-reset {
+  color: #3680fd;
+}
+.clipic-confirm {
+  color: #23c667;
+}

@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel'
 import { uglify } from 'rollup-plugin-uglify'
 import typescript from 'rollup-plugin-typescript'
+import postcss from 'rollup-plugin-postcss'
 export default [
   {
     input: './src/main.ts',
@@ -10,6 +11,9 @@ export default [
       name: 'Clipic'
     },
     plugins: [
+      postcss({
+        minimize: true
+      }),
       typescript(),
       babel({
         exclude: 'node_modules/**'
@@ -23,7 +27,10 @@ export default [
       format: 'umd',
       name: 'Clipic'
     },
-    plugins: [,
+    plugins: [
+      postcss({
+        minimize: true
+      }),
       typescript(),
       babel({
         exclude: 'node_modules/**'

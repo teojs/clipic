@@ -31,7 +31,7 @@
     }
   }
 
-  var css = ".clipic-body{background:#1c1c1c;position:fixed;width:100%;height:100%;top:0;left:0;-webkit-transform:translateY(100%);-ms-transform:translateY(100%);transform:translateY(100%);-webkit-transition:.4s;-o-transition:.4s;transition:.4s;-webkit-touch-callout:none;-webkit-user-select:none;z-index:9999;overflow:hidden}.clipic-body,.clipic-body *{-webkit-box-sizing:border-box;box-sizing:border-box}.clipic-layer{background:rgba(0,0,0,.7);pointer-events:none;transform:translateZ(0)}.clipic-layer__top{height:30px;position:relative;z-index:10}.clipic-layer__center{display:flex;align-items:stretch;justify-content:space-between}.clipic-frame{background:#f2f2f2;position:relative;z-index:1;flex:1}.clipic-layer__left,.clipic-layer__right{min-width:30px;flex-shrink:1;position:relative;z-index:10}.clipic-layer__bottom{height:100%;position:relative;z-index:10}.clipic-operation-bar{display:-webkit-box;display:-ms-flexbox;display:flex;color:#f2f2f2;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;position:absolute;width:100%;bottom:0;left:0;z-index:11}.clipic-operation-bar [role=button]{padding:15px 20px;font-size:1em}.clipic-frame img{-webkit-touch-callout:none;pointer-events:none}.clipic-cancel{color:#e04c4c}.clipic-reset{color:#3680fd}.clipic-confirm{color:#23c667}";
+  var css = ".clipic-body{background:#1c1c1c;position:fixed;width:100%;height:100%;top:0;left:0;-webkit-transform:translateY(100%);-ms-transform:translateY(100%);transform:translateY(100%);-webkit-transition:.4s;-o-transition:.4s;transition:.4s;-webkit-touch-callout:none;-webkit-user-select:none;z-index:9999;overflow:hidden}.clipic-body,.clipic-body *{-webkit-box-sizing:border-box;box-sizing:border-box}.clipic-layer{background:rgba(0,0,0,.7);pointer-events:none;transform:translateZ(0)}.clipic-layer__top{height:30px;position:relative;z-index:10}.clipic-layer__center{display:flex;align-items:stretch;justify-content:space-between}.clipic-frame{background:#f2f2f2;position:relative;z-index:1}.clipic-layer__left,.clipic-layer__right{min-width:30px;flex-shrink:1;flex:1;position:relative;z-index:10}.clipic-layer__bottom{height:100%;position:relative;z-index:10}.clipic-operation-bar{display:-webkit-box;display:-ms-flexbox;display:flex;color:#f2f2f2;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;position:absolute;width:100%;bottom:0;left:0;z-index:11}.clipic-operation-bar [role=button]{padding:15px 20px;font-size:1em}.clipic-frame img{-webkit-touch-callout:none;pointer-events:none}.clipic-cancel{color:#e04c4c}.clipic-reset{color:#3680fd}.clipic-confirm{color:#23c667}";
   styleInject(css);
 
   var dom = "\n    <div class=\"clipic-layer clipic-layer__top\"></div>\n    <div class=\"clipic-layer__center\">\n      <div class=\"clipic-layer clipic-layer__left\"></div>\n      <div class=\"clipic-frame\" id=\"clipicFrame\">\n        <img id=\"clipicImg\" crossOrigin=\"Anonymous\">\n      </div>\n      <div class=\"clipic-layer clipic-layer__right\"></div>\n    </div>\n    <div class=\"clipic-layer clipic-layer__bottom\"></div>\n    <div class=\"clipic-operation-bar\">\n      <div class=\"clipic-cancel\" id=\"clipicCancel\" role=\"button\">\u53D6\u6D88</div>\n      <div class=\"clipic-reset\" id=\"clipicReset\" role=\"button\">\u91CD\u7F6E</div>\n      <div class=\"clipic-confirm\" id=\"clipicConfirm\" role=\"button\">\u5B8C\u6210</div>\n    </div>\n  ";
@@ -41,6 +41,7 @@
           this.defaults = {
               width: 500,
               height: 500,
+              radio: '',
               src: '',
               encode: 'base64',
               type: 'jpeg',
@@ -48,15 +49,7 @@
               quality: 0.9,
               buttonText: ['取消', '重置', '完成'] // 底部三个按钮文案
           };
-          this.clipic = this.getId('clipic');
-          this.img = this.getId('clipicImg'); // 裁剪预览图
-          this.frame = this.getId('clipicFrame'); // 背景操作框
-          this.cancelBtn = this.getId('clipicCancel'); // 取消按钮
-          this.resetBtn = this.getId('clipicReset'); // 重置按钮
-          this.confirmBtn = this.getId('clipicConfirm'); // 完成按钮
-          if (!this.getId('clipic')) {
-              this.createHtml();
-          }
+          this.createHtml();
           this.clipic = this.getId('clipic');
           this.img = this.getId('clipicImg'); // 裁剪预览图
           this.frame = this.getId('clipicFrame'); // 背景操作框
@@ -68,11 +61,13 @@
           return document.getElementById(id);
       };
       Clipic.prototype.createHtml = function () {
-          var div = document.createElement('div');
-          div.className = 'clipic-body';
-          div.setAttribute('id', 'clipic');
-          div.innerHTML = dom;
-          document.body.appendChild(div);
+          if (!this.getId('clipic')) {
+              var div = document.createElement('div');
+              div.className = 'clipic-body';
+              div.setAttribute('id', 'clipic');
+              div.innerHTML = dom;
+              document.body.appendChild(div);
+          }
       };
       Clipic.prototype.getImage = function (options) {
           var _this = this;
@@ -185,8 +180,8 @@
           var _this = this;
           this.clipic.style.transform = 'translate(0, 100%)';
           setTimeout(function () {
-              _this.img.setAttribute('style', null);
-              _this.img.src = '';
+              _this.img.removeAttribute('style');
+              _this.img.removeAttribute('src');
           }, 400);
           if (this.options.onCancel && eventType !== 'done') {
               this.options.onCancel();
@@ -262,7 +257,6 @@
       };
       return Clipic;
   }();
-  //# sourceMappingURL=main.js.map
 
   return Clipic;
 

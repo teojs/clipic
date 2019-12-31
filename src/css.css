@@ -41,12 +41,12 @@
   background: #f2f2f2;
   position: relative;
   z-index: 1;
-  flex: 1;
 }
 .clipic-layer__left,
 .clipic-layer__right {
   min-width: 30px;
   flex-shrink: 1;
+  flex: 1;
   position: relative;
   z-index: 10;
 }

@@ -4,6 +4,7 @@ class Clipic {
   defaults: object = {
     width: 500,                         // 裁剪宽度
     height: 500,                        // 裁剪高度
+    radio: '',                          // 裁剪比例
     src: '',                            // 需要裁剪的图片
     encode: 'base64',                   // 导出格式，支持 base64|blob|file
     type: 'jpeg',                       // 裁剪后图片的类型，仅支持jpeg/png两种
@@ -15,12 +16,12 @@ class Clipic {
     [propName: string]: any
   }
 
-  clipic:     HTMLElement      = this.getId('clipic')
-  img:        HTMLImageElement = this.getId('clipicImg')      // 裁剪预览图
-  frame:      HTMLElement      = this.getId('clipicFrame')    // 背景操作框
-  cancelBtn:  HTMLElement      = this.getId('clipicCancel')   // 取消按钮
-  resetBtn:   HTMLElement      = this.getId('clipicReset')    // 重置按钮
-  confirmBtn: HTMLElement      = this.getId('clipicConfirm')  // 完成按钮
+  clipic:     HTMLElement
+  img:        HTMLImageElement
+  frame:      HTMLElement
+  cancelBtn:  HTMLElement
+  resetBtn:   HTMLElement
+  confirmBtn: HTMLElement
 
   // 主要参数
   scale:       number // 缩放
@@ -38,9 +39,7 @@ class Clipic {
   moveY:    number
 
   constructor() {
-    if (!this.getId('clipic')) {
-      this.createHtml()
-    }
+    this.createHtml()
     this.clipic     = this.getId('clipic')
     this.img        = this.getId('clipicImg')      // 裁剪预览图
     this.frame      = this.getId('clipicFrame')    // 背景操作框
@@ -54,11 +53,13 @@ class Clipic {
   }
 
   private createHtml(): void {
-    const div = document.createElement('div')
-    div.className = 'clipic-body'
-    div.setAttribute('id', 'clipic')
-    div.innerHTML = dom
-    document.body.appendChild(div)
+    if (!this.getId('clipic')) {
+      const div: HTMLDivElement = document.createElement('div')
+      div.className = 'clipic-body'
+      div.setAttribute('id', 'clipic')
+      div.innerHTML = dom
+      document.body.appendChild(div)
+    }
   }
 
   public getImage(options: object): void {
@@ -179,8 +180,8 @@ class Clipic {
   cancel(eventType?: any): void {
     this.clipic.style.transform = 'translate(0, 100%)'
     setTimeout(() => {
-      this.img.setAttribute('style', null)
-      this.img.src = ''
+      this.img.removeAttribute('style')
+      this.img.removeAttribute('src')
     }, 400)
     if (this.options.onCancel && eventType !== 'done') {
       this.options.onCancel()
